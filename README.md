@@ -1,3 +1,7 @@
+livefrc.netlify.app
+
+
+
 # FRC Live Dashboard — Netlify Deployment
 
 ## Project Structure
