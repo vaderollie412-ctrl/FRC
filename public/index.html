@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title> FRC Live </title>
+<link rel="icon" type="image/png" href="struens-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --red:    #ff3b3b;
+  --blue:   #6ee7ff;
+  --bg:     #0d0d10;
+  --card:   #16161c;
+  --border: #2a2a35;
+  --text:   #e8e8f0;
+  --muted:  #7a7a90;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  padding: 28px 24px;
+  min-height: 100vh;
+}
+
+header {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  margin-bottom: 6px;
+}
+
+h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+h1 span { color: var(--red); }
+
+#date {
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+select {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+select:hover, select:focus { border-color: var(--blue); }
+
+button {
+  background: var(--red);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+button:hover  { background: #e02d2d; }
+button:active { transform: scale(0.97); }
+
+#loading {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--border);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+  gap: 22px;
+}
+
+.event {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.2s;
+}
+
+event:hover { border-color: #3a3a50; }
+
+.event-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.live-badge {
+  background: var(--red);
+  color: white;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.nostream-badge {
+  background: #2a2a35;
+  color: var(--muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.event-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.event-meta {
+  font-size: 0.82rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.event-meta a {
+  color: var(--blue);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.event-meta a:hover { text-decoration: underline; }
+
+.no-stream-msg {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.rankings {
+  font-size: 0.82rem;
+}
+
+.rankings-title {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.rankings table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.rankings td {
+  padding: 3px 8px 3px 0;
+  color: var(--text);
+}
+
+.rankings td:first-child {
+  color: var(--muted);
+  width: 24px;
+}
+
+.rankings td.team {
+  color: var(--blue);
+  font-weight: 600;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.95rem;
+}
+
+.rankings td.record {
+  color: var(--muted);
+  text-align: right;
+}
+
+.next-match {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.next-match b { color: var(--text); }
+
+iframe {
+  width: 100%;
+  height: 270px;
+  border: none;
+  border-radius: 6px;
+  background: #000;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 1rem;
+  padding: 20px 0;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <h1>FRC <span>Live</span> Dashboard</h1>
+</header>
+<div id="date"></div>
+
+<div class="controls">
+  <select id="week">
+    <option value="all">All Weeks</option>
+    <option value="0">Week 1</option>
+    <option value="1">Week 2</option>
+    <option value="2">Week 3</option>
+    <option value="3">Week 4</option>
+    <option value="4">Week 5</option>
+    <option value="5">Week 6</option>
+    <option value="6">Week 7</option>
+  </select>
+  <button onclick="load()">↺ Refresh</button>
+</div>
+
+<div id="loading">
+  <div class="spinner"></div>
+  Loading events...
+</div>
+
+<div class="grid" id="streams"></div>
+
+<script>
+function setDate() {
+  const d = new Date();
+  const opts = { weekday: "long", month: "long", day: "numeric" };
+  document.getElementById("date").innerText =
+    "Events happening today: " + d.toLocaleDateString(undefined, opts);
+}
+
+async function load() {
+  const week = document.getElementById("week").value;
+  const loading = document.getElementById("loading");
+  const streams = document.getElementById("streams");
+
+  loading.style.display = "flex";
+  streams.innerHTML = "";
+
+  try {
+    const res = await fetch(`/.netlify/functions/dashboard?week=${encodeURIComponent(week)}`);
+    if (!res.ok) throw new Error("Server error: " + res.status);
+    const data = await res.json();
+    loading.style.display = "none";
+    render(data);
+  } catch (err) {
+    loading.style.display = "none";
+    streams.innerHTML = "<p class='empty'>Failed to load events. Please try refreshing.</p>";
+    console.error(err);
+  }
+}
+
+function render(events) {
+  const div = document.getElementById("streams");
+  div.innerHTML = "";
+
+  if (!events || events.length === 0) {
+    div.innerHTML = "<p class='empty'>No events are scheduled for today.</p>";
+    return;
+  }
+
+  const twitchParent = encodeURIComponent(location.hostname);
+
+  events.forEach(e => {
+    let embed = "";
+    let badge = "";
+    const tbaLink = `<a href="https://thebluealliance.com/event/${e.key}" target="_blank">↗ View on TBA</a>`;
+    const streamLink = e.type !== "none"
+      ? `<a href="${e.link}" target="_blank">↗ Open Stream</a> ${tbaLink}`
+      : tbaLink;
+
+    if (e.type === "youtube") {
+      badge = e.isLive
+        ? `<span class="live-badge">🔴 Live</span>`
+        : `<span class="nostream-badge">📅 Today</span>`;
+      embed = `<iframe
+        src="https://www.youtube.com/embed/${e.channel}?autoplay=0"
+        allowfullscreen
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+      </iframe>`;
+    } else if (e.type === "twitch") {
+      badge = e.isLive
+        ? `<span class="live-badge">🔴 Live</span>`
+        : `<span class="nostream-badge">📅 Today</span>`;
+      embed = `<iframe
+        src="https://player.twitch.tv/?channel=${e.channel}&parent=${twitchParent}"
+        allowfullscreen>
+      </iframe>`;
+    } else {
+      badge = `<span class="nostream-badge">📅 Today</span>`;
+      embed = `<div class="no-stream-msg">No stream listed — check TBA or the event's website for a link.</div>`;
+    }
+
+    let rankingsHTML = "";
+    if (e.rankings && e.rankings.length) {
+      const rows = e.rankings.map(r =>
+        `<tr>
+          <td>${r.rank}</td>
+          <td class="team">${r.team}</td>
+          <td class="record">${r.wins}-${r.losses}${r.ties ? "-" + r.ties : ""}</td>
+        </tr>`
+      ).join("");
+      rankingsHTML = `<div class="rankings">
+        <div class="rankings-title">🏆 Top 5 Rankings</div>
+        <table>${rows}</table>
+      </div>`;
+    }
+
+    const matchHTML = e.nextMatch
+      ? `<div class="next-match">⏭ Next Match: <b>${e.nextMatch}</b></div>`
+      : "";
+
+    const block = document.createElement("div");
+    block.className = "event";
+    block.innerHTML = `
+      <div class="event-header">
+        ${badge}
+        <div class="event-name">${e.name}</div>
+      </div>
+      <div class="event-meta">
+        <span>${e.city}, ${e.country}</span>
+        <span>Week ${Number(e.week) + 1}</span>
+        ${streamLink}
+      </div>
+      ${matchHTML}
+      ${rankingsHTML}
+      ${embed}
+    `;
+
+    div.appendChild(block);
+  });
+}
+
+setDate();
+load();
+</script>
+
+</body>
+</html>
