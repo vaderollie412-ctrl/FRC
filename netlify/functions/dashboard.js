@@ -58,15 +58,21 @@ export default async function handler(req) {
         if (!hasMatchToday) return;
       }
 
-      // Stream — pick by day index so day 2 uses webcasts[1], etc.
+      // Stream — pick by position within the final window, not the full event
+      // So window day 1 = webcasts[0], window day 2 = webcasts[1], etc.
+      // Regional window = 3 days (end-2, end-1, end)
+      // District window = 2 days (end-1, end)
       let type = "none";
       let link = "https://thebluealliance.com/event/" + e.key;
       let channel = "";
       const webcasts = (e.webcasts || []).filter(s => s.type === "youtube" || s.type === "twitch");
       if (webcasts.length > 0) {
-        const eventStart = new Date(e.start_date + "T00:00:00Z");
+        const isRegional = e.event_type === 0;
+        const daysBack = isRegional ? 2 : 1;
+        const windowStart = new Date(e.end_date + "T00:00:00Z");
+        windowStart.setDate(windowStart.getDate() - daysBack);
         const msPerDay = 24 * 60 * 60 * 1000;
-        const dayIndex = Math.round((new Date(today + "T00:00:00Z") - eventStart) / msPerDay);
+        const dayIndex = Math.round((new Date(today + "T00:00:00Z") - windowStart) / msPerDay);
         const streamIndex = Math.min(Math.max(dayIndex, 0), webcasts.length - 1);
         const stream = webcasts[streamIndex];
         type = stream.type;
