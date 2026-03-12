@@ -1,0 +1,17 @@
+{
+  "name": "frc",
+  "version": "1.0.0",
+  "description": "livefrc.netlify.app",
+  "main": "index.js",
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "netlify-cli": "^24.1.0"
+  }
+  
+}
+
