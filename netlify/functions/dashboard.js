@@ -26,12 +26,15 @@ export default async function handler(req) {
     const events = await tbaFetch("/events/2026");
     const today = todayStr();
 
-    // Pass 1: final 2 days of event window (±1 day buffer for timezone drift)
+    // Pass 1: regionals show final 3 days, districts show final 2 days (±1 day timezone buffer)
+    // event_type 0 = Regional, 1 = District
     const candidates = events.filter(e => {
       if (weekFilter !== "all" && String(e.week) !== String(weekFilter)) return false;
+      const isRegional = e.event_type === 0;
+      const daysBack = isRegional ? 2 : 1; // how many days before end_date to start showing
       const end = new Date(e.end_date + "T00:00:00Z");
       const windowStart = new Date(end);
-      windowStart.setDate(windowStart.getDate() - 1);
+      windowStart.setDate(windowStart.getDate() - daysBack);
       const windowEnd = new Date(end);
       windowEnd.setDate(windowEnd.getDate() + 1);
       windowEnd.setHours(23, 59, 59, 999);
