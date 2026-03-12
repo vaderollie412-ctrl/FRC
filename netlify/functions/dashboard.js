@@ -11,7 +11,7 @@ async function tbaFetch(path) {
 }
 
 function todayStr() {
-  return new Date().toISOString().slice(0, 10); // "yyyy-MM-dd" in UTC
+  return new Date().toISOString().slice(0, 10);
 }
 
 function fmtDate(epochSec) {
@@ -26,7 +26,7 @@ export default async function handler(req) {
     const events = await tbaFetch("/events/2026");
     const today = todayStr();
 
-    // Pass 1: window filter — within 2 days before end_date through 1 day after
+    // Pass 1: final 2 days of event window (±1 day buffer for timezone drift)
     const candidates = events.filter(e => {
       if (weekFilter !== "all" && String(e.week) !== String(weekFilter)) return false;
       const end = new Date(e.end_date + "T00:00:00Z");
@@ -39,7 +39,6 @@ export default async function handler(req) {
       return now >= windowStart && now <= windowEnd;
     });
 
-    // Pass 2: confirm a match is actually today
     const output = [];
 
     await Promise.all(candidates.map(async e => {
@@ -50,28 +49,28 @@ export default async function handler(req) {
         console.error("matches fetch failed for", e.key, err.message);
       }
 
+      // Pass 2: confirm a match is scheduled today
       if (matches.length > 0) {
         const hasMatchToday = matches.some(m => m.time && fmtDate(m.time) === today);
         if (!hasMatchToday) return;
       }
 
-      // Stream info
+      // Stream — pick by day index so day 2 uses webcasts[1], etc.
       let type = "none";
       let link = "https://thebluealliance.com/event/" + e.key;
       let channel = "";
-      const webcasts = e.webcasts || [];
-      for (const stream of webcasts) {
-        if (stream.type === "youtube") {
-          type = "youtube";
-          channel = stream.channel;
-          link = "https://youtube.com/watch?v=" + stream.channel;
-          break;
-        } else if (stream.type === "twitch") {
-          type = "twitch";
-          channel = stream.channel;
-          link = "https://twitch.tv/" + stream.channel;
-          break;
-        }
+      const webcasts = (e.webcasts || []).filter(s => s.type === "youtube" || s.type === "twitch");
+      if (webcasts.length > 0) {
+        const eventStart = new Date(e.start_date + "T00:00:00Z");
+        const msPerDay = 24 * 60 * 60 * 1000;
+        const dayIndex = Math.round((new Date(today + "T00:00:00Z") - eventStart) / msPerDay);
+        const streamIndex = Math.min(Math.max(dayIndex, 0), webcasts.length - 1);
+        const stream = webcasts[streamIndex];
+        type = stream.type;
+        channel = stream.channel;
+        link = stream.type === "youtube"
+          ? "https://youtube.com/watch?v=" + stream.channel
+          : "https://twitch.tv/" + stream.channel;
       }
 
       // Today's matches, next upcoming, live status
@@ -86,21 +85,49 @@ export default async function handler(req) {
         isLive = nowSec >= times[0] && nowSec <= times[times.length - 1] + 3600;
       }
 
-      // Top 5 rankings
+      // Top 5 rankings (summary card) + full rankings (expanded panel)
       let rankings = [];
+      let fullRankings = [];
       try {
         const rankData = await tbaFetch(`/event/${e.key}/rankings`);
         if (rankData?.rankings) {
-          rankings = rankData.rankings.slice(0, 5).map(r => ({
+          const mapped = rankData.rankings.map(r => ({
             rank: r.rank,
             team: r.team_key.replace("frc", ""),
             wins: r.record?.wins ?? 0,
             losses: r.record?.losses ?? 0,
             ties: r.record?.ties ?? 0
           }));
+          rankings = mapped.slice(0, 5);
+          fullRankings = mapped;
         }
       } catch (err) {
         console.error("rankings fetch failed for", e.key, err.message);
+      }
+
+      // 10 most recent completed matches
+      let recentMatches = [];
+      try {
+        const completed = matches
+          .filter(m => m.alliances && m.alliances.red.score !== null && m.alliances.red.score >= 0)
+          .sort((a, b) => (b.time || 0) - (a.time || 0))
+          .slice(0, 10);
+
+        recentMatches = completed.map(m => {
+          const redScore  = m.alliances.red.score;
+          const blueScore = m.alliances.blue.score;
+          const winner = redScore > blueScore ? "red" : blueScore > redScore ? "blue" : "tie";
+          return {
+            key: m.key.split("_")[1].toUpperCase(),
+            redScore,
+            blueScore,
+            redTeams:  m.alliances.red.team_keys.map(t => t.replace("frc", "")),
+            blueTeams: m.alliances.blue.team_keys.map(t => t.replace("frc", "")),
+            winner
+          };
+        });
+      } catch (err) {
+        console.error("recent matches failed for", e.key, err.message);
       }
 
       output.push({
@@ -113,6 +140,8 @@ export default async function handler(req) {
         channel,
         link,
         rankings,
+        fullRankings,
+        recentMatches,
         nextMatch,
         isLive
       });

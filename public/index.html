@@ -18,6 +18,7 @@
   --blue:   #6ee7ff;
   --bg:     #0d0d10;
   --card:   #16161c;
+  --panel:  #111117;
   --border: #2a2a35;
   --text:   #e8e8f0;
   --muted:  #7a7a90;
@@ -123,18 +124,26 @@ button:active { transform: scale(0.97); }
   gap: 22px;
 }
 
+/* ── Card ── */
 .event {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s;
+}
+
+.event:hover { border-color: #3a3a50; }
+
+/* Summary — original padding/gap preserved exactly */
+.event-summary {
   padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  transition: border-color 0.2s;
 }
-
-event:hover { border-color: #3a3a50; }
 
 .event-header {
   display: flex;
@@ -168,12 +177,30 @@ event:hover { border-color: #3a3a50; }
   flex-shrink: 0;
 }
 
+/* Clickable event name */
 .event-name {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.2;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
 }
+
+.event-name:hover { color: var(--blue); }
+
+.chevron {
+  font-size: 0.65rem;
+  color: var(--muted);
+  transition: transform 0.22s;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.event.open .chevron { transform: rotate(90deg); }
 
 .event-meta {
   font-size: 0.82rem;
@@ -198,9 +225,7 @@ event:hover { border-color: #3a3a50; }
   font-style: italic;
 }
 
-.rankings {
-  font-size: 0.82rem;
-}
+.rankings { font-size: 0.82rem; }
 
 .rankings-title {
   color: var(--muted);
@@ -211,52 +236,163 @@ event:hover { border-color: #3a3a50; }
   margin-bottom: 6px;
 }
 
-.rankings table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.rankings td {
-  padding: 3px 8px 3px 0;
-  color: var(--text);
-}
-
-.rankings td:first-child {
-  color: var(--muted);
-  width: 24px;
-}
-
+.rankings table { width: 100%; border-collapse: collapse; }
+.rankings td { padding: 3px 8px 3px 0; color: var(--text); }
+.rankings td:first-child { color: var(--muted); width: 24px; }
 .rankings td.team {
   color: var(--blue);
   font-weight: 600;
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 0.95rem;
 }
+.rankings td.record { color: var(--muted); text-align: right; }
 
-.rankings td.record {
-  color: var(--muted);
-  text-align: right;
-}
-
-.next-match {
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-
+.next-match { font-size: 0.85rem; color: var(--muted); }
 .next-match b { color: var(--text); }
 
-iframe {
+.empty { color: var(--muted); font-size: 1rem; padding: 20px 0; }
+
+/* ── Expanded panel ── */
+.event-panel {
+  display: none;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.event.open .event-panel { display: flex; }
+
+.panel-stream iframe {
   width: 100%;
   height: 270px;
   border: none;
-  border-radius: 6px;
+  border-radius: 0;
   background: #000;
+  display: block;
 }
 
-.empty {
+.panel-stream .no-stream-msg {
+  padding: 16px 18px;
+  font-size: 0.85rem;
   color: var(--muted);
+  font-style: italic;
+}
+
+.panel-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--border);
+}
+
+.panel-col {
+  padding: 16px 18px;
+}
+
+.panel-col:first-child {
+  border-right: 1px solid var(--border);
+}
+
+.panel-title {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* Full rankings in panel */
+.full-rank-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.full-rank-table th {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0 6px 6px 0;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.full-rank-table th:last-child { text-align: right; }
+
+.full-rank-table td {
+  padding: 4px 6px 4px 0;
+  border-bottom: 1px solid #1a1a24;
+}
+
+.full-rank-table td:first-child { color: var(--muted); width: 22px; }
+.full-rank-table td.team {
+  color: var(--blue);
+  font-weight: 600;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.92rem;
+}
+.full-rank-table td.record { color: var(--muted); text-align: right; }
+
+/* Recent matches in panel */
+.matches-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.matches-table th {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0 0 6px 0;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.matches-table td {
+  padding: 5px 0;
+  border-bottom: 1px solid #1a1a24;
+  vertical-align: top;
+}
+
+.match-key {
+  color: var(--muted);
+  font-size: 0.78rem;
+  white-space: nowrap;
+  padding-right: 10px;
+}
+
+.score-line {
+  font-family: 'Barlow Condensed', sans-serif;
   font-size: 1rem;
-  padding: 20px 0;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.score-red  { color: #ff6b6b; }
+.score-blue { color: #6eb8ff; }
+.score-sep  { color: var(--muted); font-size: 0.8rem; }
+
+.teams-line {
+  font-size: 0.74rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.teams-red  { color: #ff9a9a; }
+.teams-blue { color: #9ac8ff; }
+
+.panel-empty {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-style: italic;
 }
 
 </style>
@@ -330,35 +466,26 @@ function render(events) {
   const twitchParent = encodeURIComponent(location.hostname);
 
   events.forEach(e => {
-    let embed = "";
+    // Badge
     let badge = "";
+    if (e.type !== "none" && e.isLive) {
+      badge = `<span class="live-badge">🔴 Live</span>`;
+    } else {
+      badge = `<span class="nostream-badge">📅 Today</span>`;
+    }
+
+    // Links
     const tbaLink = `<a href="https://thebluealliance.com/event/${e.key}" target="_blank">↗ View on TBA</a>`;
     const streamLink = e.type !== "none"
       ? `<a href="${e.link}" target="_blank">↗ Open Stream</a> ${tbaLink}`
       : tbaLink;
 
-    if (e.type === "youtube") {
-      badge = e.isLive
-        ? `<span class="live-badge">🔴 Live</span>`
-        : `<span class="nostream-badge">📅 Today</span>`;
-      embed = `<iframe
-        src="https://www.youtube.com/embed/${e.channel}?autoplay=0"
-        allowfullscreen
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-      </iframe>`;
-    } else if (e.type === "twitch") {
-      badge = e.isLive
-        ? `<span class="live-badge">🔴 Live</span>`
-        : `<span class="nostream-badge">📅 Today</span>`;
-      embed = `<iframe
-        src="https://player.twitch.tv/?channel=${e.channel}&parent=${twitchParent}"
-        allowfullscreen>
-      </iframe>`;
-    } else {
-      badge = `<span class="nostream-badge">📅 Today</span>`;
-      embed = `<div class="no-stream-msg">No stream listed — check TBA or the event's website for a link.</div>`;
-    }
+    // Next match
+    const matchHTML = e.nextMatch
+      ? `<div class="next-match">⏭ Next Match: <b>${e.nextMatch}</b></div>`
+      : "";
 
+    // Top 5 rankings on summary card
     let rankingsHTML = "";
     if (e.rankings && e.rankings.length) {
       const rows = e.rankings.map(r =>
@@ -374,26 +501,106 @@ function render(events) {
       </div>`;
     }
 
-    const matchHTML = e.nextMatch
-      ? `<div class="next-match">⏭ Next Match: <b>${e.nextMatch}</b></div>`
-      : "";
+    // ── Panel: stream ──
+    let panelStream = "";
+    if (e.type === "youtube") {
+      panelStream = `<div class="panel-stream">
+        <iframe src="https://www.youtube.com/embed/${e.channel}?autoplay=0"
+          allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+        </iframe>
+      </div>`;
+    } else if (e.type === "twitch") {
+      panelStream = `<div class="panel-stream">
+        <iframe src="https://player.twitch.tv/?channel=${e.channel}&parent=${twitchParent}"
+          allowfullscreen>
+        </iframe>
+      </div>`;
+    } else {
+      panelStream = `<div class="panel-stream">
+        <div class="no-stream-msg">No stream listed — check TBA or the event's website for a link.</div>
+      </div>`;
+    }
+
+    // ── Panel: full rankings ──
+    let fullRankHTML = `<div class="panel-empty">No rankings yet.</div>`;
+    if (e.fullRankings && e.fullRankings.length) {
+      const rows = e.fullRankings.map(r =>
+        `<tr>
+          <td>${r.rank}</td>
+          <td class="team">${r.team}</td>
+          <td class="record">${r.wins}-${r.losses}${r.ties ? "-" + r.ties : ""}</td>
+        </tr>`
+      ).join("");
+      fullRankHTML = `<table class="full-rank-table">
+        <thead><tr><th>#</th><th>Team</th><th>W-L</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    }
+
+    // ── Panel: recent matches ──
+    let recentHTML = `<div class="panel-empty">No completed matches yet.</div>`;
+    if (e.recentMatches && e.recentMatches.length) {
+      const rows = e.recentMatches.map(m =>
+        `<tr>
+          <td class="match-key">${m.key}</td>
+          <td>
+            <div class="score-line">
+              <span class="score-red">${m.redScore}</span>
+              <span class="score-sep">–</span>
+              <span class="score-blue">${m.blueScore}</span>
+            </div>
+            <div class="teams-line">
+              <span class="teams-red">${m.redTeams.join(", ")}</span>
+              <span class="score-sep"> vs </span>
+              <span class="teams-blue">${m.blueTeams.join(", ")}</span>
+            </div>
+          </td>
+        </tr>`
+      ).join("");
+      recentHTML = `<table class="matches-table">
+        <thead><tr><th>Match</th><th>Result</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    }
 
     const block = document.createElement("div");
     block.className = "event";
     block.innerHTML = `
-      <div class="event-header">
-        ${badge}
-        <div class="event-name">${e.name}</div>
+      <div class="event-summary">
+        <div class="event-header">
+          ${badge}
+          <div class="event-name">
+            ${e.name}
+            <span class="chevron">▶</span>
+          </div>
+        </div>
+        <div class="event-meta">
+          <span>${e.city}, ${e.country}</span>
+          <span>Week ${Number(e.week) + 1}</span>
+          ${streamLink}
+        </div>
+        ${matchHTML}
+        ${rankingsHTML}
       </div>
-      <div class="event-meta">
-        <span>${e.city}, ${e.country}</span>
-        <span>Week ${Number(e.week) + 1}</span>
-        ${streamLink}
+      <div class="event-panel">
+        ${panelStream}
+        <div class="panel-columns">
+          <div class="panel-col">
+            <div class="panel-title">Full Rankings</div>
+            ${fullRankHTML}
+          </div>
+          <div class="panel-col">
+            <div class="panel-title">Last 10 Matches</div>
+            ${recentHTML}
+          </div>
+        </div>
       </div>
-      ${matchHTML}
-      ${rankingsHTML}
-      ${embed}
     `;
+
+    block.querySelector(".event-name").addEventListener("click", () => {
+      block.classList.toggle("open");
+    });
 
     div.appendChild(block);
   });
