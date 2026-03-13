@@ -62,11 +62,20 @@ export default async function handler(req) {
       // So window day 1 = webcasts[0], window day 2 = webcasts[1], etc.
       // Regional window = 3 days (end-2, end-1, end)
       // District window = 2 days (end-1, end)
+      // Manual overrides for events TBA has missing/incorrect webcasts
+      const streamOverrides = {
+        "2026mimid": { type: "youtube", channel: "_oZuIOGYB_4" }
+      };
+
       let type = "none";
       let link = "https://thebluealliance.com/event/" + e.key;
       let channel = "";
       const webcasts = (e.webcasts || []).filter(s => s.type === "youtube" || s.type === "twitch");
-      if (webcasts.length > 0) {
+      if (streamOverrides[e.key]) {
+        type = streamOverrides[e.key].type;
+        channel = streamOverrides[e.key].channel;
+        link = "https://youtube.com/watch?v=" + channel;
+      } else if (webcasts.length > 0) {
         const isRegional = e.event_type === 0;
         const daysBack = isRegional ? 2 : 1;
         const windowStart = new Date(e.end_date + "T00:00:00Z");

@@ -56,6 +56,37 @@ h1 span { color: var(--red); }
   font-weight: 500;
 }
 
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.tab-btn {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 18px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.tab-btn:hover { color: var(--text); border-color: #3a3a50; }
+.tab-btn:active { transform: scale(0.97); }
+
+.tab-btn.active {
+  background: var(--red);
+  color: white;
+  border-color: var(--red);
+}
+
 .controls {
   display: flex;
   align-items: center;
@@ -460,6 +491,81 @@ button:active { transform: scale(0.97); }
   font-style: italic;
 }
 
+/* ── Multiview ── */
+#view-multiview { display: none; }
+
+.multiview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  gap: 20px;
+}
+
+.mv-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s;
+}
+
+.mv-card:hover { border-color: #3a3a50; }
+
+.mv-header {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mv-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mv-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.mv-meta {
+  font-size: 0.8rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mv-meta a {
+  color: var(--blue);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.mv-meta a:hover { text-decoration: underline; }
+
+.mv-stream iframe {
+  width: 100%;
+  height: 270px;
+  border: none;
+  background: #000;
+  display: block;
+}
+
+.mv-stream .no-stream-msg {
+  padding: 20px 16px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-style: italic;
+  text-align: center;
+}
+
 </style>
 </head>
 <body>
@@ -468,6 +574,12 @@ button:active { transform: scale(0.97); }
   <h1>FRC <span>Live</span> Dashboard</h1>
 </header>
 <div id="date"></div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+  <button class="tab-btn" onclick="switchTab('multiview')">Multiview</button>
+</div>
 
 <div class="controls">
   <select id="week">
@@ -488,9 +600,33 @@ button:active { transform: scale(0.97); }
   Loading events...
 </div>
 
-<div class="grid" id="streams"></div>
+<!-- Dashboard view -->
+<div id="view-dashboard">
+  <div class="grid" id="streams"></div>
+</div>
+
+<!-- Multiview -->
+<div id="view-multiview">
+  <div class="multiview-grid" id="multiview-streams"></div>
+</div>
 
 <script>
+let currentTab = "dashboard";
+let cachedEvents = null;
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  event.currentTarget.classList.add("active");
+
+  document.getElementById("view-dashboard").style.display = tab === "dashboard" ? "block" : "none";
+  document.getElementById("view-multiview").style.display = tab === "multiview" ? "block" : "none";
+
+  if (tab === "multiview" && cachedEvents) {
+    renderMultiview(cachedEvents);
+  }
+}
+
 function setDate() {
   const d = new Date();
   const opts = { weekday: "long", month: "long", day: "numeric" };
@@ -505,13 +641,16 @@ async function load() {
 
   loading.style.display = "flex";
   streams.innerHTML = "";
+  document.getElementById("multiview-streams").innerHTML = "";
 
   try {
     const res = await fetch(`/.netlify/functions/dashboard?week=${encodeURIComponent(week)}`);
     if (!res.ok) throw new Error("Server error: " + res.status);
     const data = await res.json();
+    cachedEvents = data;
     loading.style.display = "none";
     render(data);
+    if (currentTab === "multiview") renderMultiview(data);
     updateCountdowns();
   } catch (err) {
     loading.style.display = "none";
@@ -681,6 +820,71 @@ function render(events) {
     });
 
     div.appendChild(block);
+  });
+}
+
+function renderMultiview(events) {
+  const div = document.getElementById("multiview-streams");
+  div.innerHTML = "";
+
+  if (!events || events.length === 0) {
+    div.innerHTML = "<p class='empty'>No events are scheduled for today.</p>";
+    return;
+  }
+
+  const twitchParent = encodeURIComponent(location.hostname);
+
+  events.forEach(e => {
+    let badge = "";
+    if (e.type !== "none" && e.isLive) {
+      badge = `<span class="live-badge">🔴 Live</span>`;
+    } else {
+      badge = `<span class="nostream-badge">📅 Today</span>`;
+    }
+
+    const tbaLink = `<a href="https://thebluealliance.com/event/${e.key}" target="_blank">↗ TBA</a>`;
+    const streamLink = e.type !== "none"
+      ? `<a href="${e.link}" target="_blank">↗ Stream</a> · ${tbaLink}`
+      : tbaLink;
+
+    let streamHTML = "";
+    if (e.type === "youtube") {
+      streamHTML = `<div class="mv-stream">
+        <iframe src="https://www.youtube.com/embed/${e.channel}?autoplay=0"
+          allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+        </iframe>
+      </div>`;
+    } else if (e.type === "twitch") {
+      streamHTML = `<div class="mv-stream">
+        <iframe src="https://player.twitch.tv/?channel=${e.channel}&parent=${twitchParent}"
+          allowfullscreen>
+        </iframe>
+      </div>`;
+    } else {
+      streamHTML = `<div class="mv-stream">
+        <div class="no-stream-msg">No stream listed for this event.</div>
+      </div>`;
+    }
+
+    const card = document.createElement("div");
+    card.className = "mv-card";
+    card.innerHTML = `
+      <div class="mv-header">
+        <div class="mv-title-row">
+          ${badge}
+          <div class="mv-name">${e.name}</div>
+        </div>
+        <div class="mv-meta">
+          <span>${e.city}, ${e.country}</span>
+          <span>Week ${Number(e.week) + 1}</span>
+          ${streamLink}
+        </div>
+      </div>
+      ${streamHTML}
+    `;
+
+    div.appendChild(card);
   });
 }
 
