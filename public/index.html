@@ -604,26 +604,24 @@ function JobRow({ job, onStop }) {
     <div className="ss-row">
       <div className="ss-row-url" title={job.url}>{job.url}</div>
       <div style={{display:"flex",flexDirection:"column",gap:4}}>
-        {job.status==="done" && job.share_link && (
-          <>
-            <div style={{display:"flex",alignItems:"center",gap:6}}>
-              <span style={{fontSize:"0.7rem",fontFamily:"'Barlow Condensed',sans-serif",color:"var(--muted)",textTransform:"uppercase",letterSpacing:"0.08em"}}>Viewer:</span>
-              <a className="ss-row-link" href={job.share_link} target="_blank" rel="noopener">{job.share_link}</a>
-            </div>
-            {job.host_link && (
-              <div style={{display:"flex",alignItems:"center",gap:6}}>
-                <span style={{fontSize:"0.7rem",fontFamily:"'Barlow Condensed',sans-serif",color:"#00e5a0",textTransform:"uppercase",letterSpacing:"0.08em"}}>You:</span>
-                <a className="ss-row-link" href={job.host_link} target="_blank" rel="noopener" style={{color:"#00e5a0"}}>Open to start sharing →</a>
-              </div>
-            )}
-          </>
+        {job.status==="done" && (
+          <div style={{display:"flex",flexDirection:"column",gap:3}}>
+            <span style={{fontSize:"0.78rem",color:"var(--muted)"}}>
+              1. <a className="ss-row-link" style={{display:"inline"}} href="https://screensharing.net" target="_blank" rel="noopener">Open screensharing.net</a> on your PC
+            </span>
+            <span style={{fontSize:"0.78rem",color:"var(--muted)"}}>
+              2. Click <strong style={{color:"var(--text)"}}>Share My Screen</strong> — copy the room link
+            </span>
+            <span style={{fontSize:"0.78rem",color:"var(--muted)"}}>
+              3. Share that link with viewers watching <strong style={{color:"#5599e8"}}>{job.url}</strong>
+            </span>
+          </div>
         )}
         {job.status==="error"   && <span className="ss-row-err" title={job.error}>{job.error}</span>}
         {job.status==="stopped" && <span style={{fontSize:"0.78rem",color:"var(--muted)",fontFamily:"'DM Mono',monospace"}}>Session ended</span>}
         {(job.status==="queued"||job.status==="running") && <span style={{fontSize:"0.78rem",color:"var(--muted)"}}>—</span>}
       </div>
       <div className="ss-acts">
-        {job.status==="done" && job.share_link && <CopyBtn text={job.share_link} />}
         {live && <button className="ss-stop" onClick={()=>onStop(job.id)}>■ Stop</button>}
         <SSBadge status={job.status} />
       </div>
