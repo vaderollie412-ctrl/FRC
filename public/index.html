@@ -137,17 +137,6 @@ button:active { transform: scale(0.97); }
 
 .event:hover { border-color: #3a3a50; }
 
-.event.is-live {
-  border-color: var(--red);
-  box-shadow: 0 0 0 0px rgba(255, 59, 59, 0.3);
-  animation: live-pulse 2s ease-in-out infinite;
-}
-
-@keyframes live-pulse {
-  0%, 100% { box-shadow: 0 0 0 0px rgba(255, 59, 59, 0.3); }
-  50%       { box-shadow: 0 0 0 5px rgba(255, 59, 59, 0); }
-}
-
 /* Summary — original padding/gap preserved exactly */
 .event-summary {
   padding: 18px;
@@ -260,6 +249,71 @@ button:active { transform: scale(0.97); }
 
 .next-match { font-size: 0.85rem; color: var(--muted); }
 .next-match b { color: var(--text); }
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  margin-top: 4px;
+}
+
+.schedule-table th {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0 8px 5px 0;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.schedule-table th:last-child { text-align: right; }
+
+.schedule-table td {
+  padding: 4px 8px 4px 0;
+  border-bottom: 1px solid #1a1a24;
+  vertical-align: middle;
+}
+
+.schedule-table td:last-child { text-align: right; }
+
+.schedule-table tr.next-row td { color: var(--text); }
+
+.schedule-match-key {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--blue);
+}
+
+.schedule-table tr.next-row .schedule-match-key { color: var(--red); }
+
+.eta-cell { font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+
+.on-field {
+  color: var(--red);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  animation: blink-red 1s ease-in-out infinite;
+}
+
+@keyframes blink-red {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.schedule-title {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
 
 .empty { color: var(--muted); font-size: 1rem; padding: 20px 0; }
 
@@ -458,6 +512,7 @@ async function load() {
     const data = await res.json();
     loading.style.display = "none";
     render(data);
+    updateCountdowns();
   } catch (err) {
     loading.style.display = "none";
     streams.innerHTML = "<p class='empty'>Failed to load events. Please try refreshing.</p>";
@@ -491,10 +546,22 @@ function render(events) {
       ? `<a href="${e.link}" target="_blank">↗ Open Stream</a> ${tbaLink}`
       : tbaLink;
 
-    // Next match
-    const matchHTML = e.nextMatch
-      ? `<div class="next-match">⏭ Next Match: <b>${e.nextMatch}</b></div>`
-      : "";
+    // Upcoming schedule table
+    let scheduleHTML = "";
+    if (e.upcomingSchedule && e.upcomingSchedule.length) {
+      const rows = e.upcomingSchedule.map((m, i) => {
+        const isNext = i === 0;
+        return `<tr class="${isNext ? "next-row" : ""}" data-time="${m.time}">
+          <td><span class="schedule-match-key">${m.key}</span></td>
+          <td class="eta-cell" data-time="${m.time}">—</td>
+        </tr>`;
+      }).join("");
+      scheduleHTML = `<div class="schedule-title">⏭ Upcoming Matches</div>
+        <table class="schedule-table">
+          <thead><tr><th>Match</th><th style="text-align:right">ETA</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
 
     // Top 5 rankings on summary card
     let rankingsHTML = "";
@@ -576,7 +643,7 @@ function render(events) {
     }
 
     const block = document.createElement("div");
-    block.className = "event" + (e.isLive ? " is-live" : "");
+    block.className = "event";
     block.innerHTML = `
       <div class="event-summary">
         <div class="event-header">
@@ -591,7 +658,7 @@ function render(events) {
           <span>Week ${Number(e.week) + 1}</span>
           ${streamLink}
         </div>
-        ${matchHTML}
+        ${scheduleHTML}
         ${rankingsHTML}
       </div>
       <div class="event-panel">
@@ -616,6 +683,23 @@ function render(events) {
     div.appendChild(block);
   });
 }
+
+function updateCountdowns() {
+  const now = Date.now() / 1000;
+  document.querySelectorAll(".eta-cell[data-time]").forEach(cell => {
+    const t = parseInt(cell.dataset.time, 10);
+    const diff = t - now;
+    if (diff <= 0) {
+      cell.innerHTML = `<span class="on-field">On Field</span>`;
+    } else {
+      const h = Math.floor(diff / 3600);
+      const m = Math.floor((diff % 3600) / 60);
+      cell.textContent = h > 0 ? `~${h}h ${m}m` : `~${m} min`;
+    }
+  });
+}
+
+setInterval(updateCountdowns, 10000);
 
 setDate();
 load();
