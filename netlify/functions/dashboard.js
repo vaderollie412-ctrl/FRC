@@ -87,6 +87,11 @@ export default async function handler(req) {
       const todayMatches = matches.filter(m => m.time && fmtDate(m.time) === today);
       const upcoming = todayMatches.filter(m => m.time > nowSec).sort((a, b) => a.time - b.time);
       const nextMatch = upcoming.length ? upcoming[0].key.split("_")[1].toUpperCase() : "";
+      const nextMatchTime = upcoming.length ? upcoming[0].time : null;
+      const upcomingSchedule = upcoming.slice(0, 8).map(m => ({
+        key: m.key.split("_")[1].toUpperCase(),
+        time: m.time
+      }));
 
       let isLive = false;
       if (todayMatches.length > 0) {
@@ -152,6 +157,8 @@ export default async function handler(req) {
         fullRankings,
         recentMatches,
         nextMatch,
+        nextMatchTime,
+        upcomingSchedule,
         isLive
       });
     }));
