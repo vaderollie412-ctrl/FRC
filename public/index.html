@@ -2,207 +2,59 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title> FRC Live </title>
+<title>FRC Live</title>
 <link rel="icon" type="image/png" href="struens-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --red:    #ff3b3b;
-  --blue:   #6ee7ff;
-  --bg:     #0d0d10;
-  --card:   #16161c;
-  --panel:  #111117;
-  --border: #2a2a35;
-  --text:   #e8e8f0;
-  --muted:  #7a7a90;
+  --red: #ff3b3b; --blue: #6ee7ff; --bg: #0d0d10; --card: #16161c;
+  --panel: #111117; --border: #2a2a35; --text: #e8e8f0; --muted: #7a7a90;
 }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Barlow', sans-serif;
-  padding: 28px 24px;
-  min-height: 100vh;
-}
-
-header {
-  display: flex;
-  align-items: baseline;
-  gap: 18px;
-  margin-bottom: 6px;
-}
-
-h1 {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 2.4rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
+body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; padding: 28px 24px; min-height: 100vh; }
+header { display: flex; align-items: baseline; gap: 18px; margin-bottom: 6px; }
+h1 { font-family: 'Barlow Condensed', sans-serif; font-size: 2.4rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
 h1 span { color: var(--red); }
+#date { font-size: 0.95rem; color: var(--muted); margin-bottom: 20px; font-weight: 500; }
 
-#date {
-  font-size: 0.95rem;
-  color: var(--muted);
-  margin-bottom: 20px;
-  font-weight: 500;
-}
-
-/* ── TABS ── */
-.tabs {
-  display: flex;
-  gap: 0;
-  margin-bottom: 28px;
-  border-bottom: 1px solid var(--border);
-}
-
+/* TABS */
+.tabs { display: flex; gap: 4px; margin-bottom: 12px; }
 .tab-btn {
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  color: var(--muted);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 8px 20px 10px;
-  cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
+  background: transparent; color: var(--muted); border: 1px solid var(--border);
+  border-radius: 6px; padding: 7px 18px;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 0.95rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
 }
+.tab-btn:hover { color: var(--text); border-color: #3a3a50; }
+.tab-btn:active { transform: scale(0.97); }
+.tab-btn.active { background: var(--red); color: white; border-color: var(--red); }
+.tab-btn.active.ss-tab { background: #1a6fd4; border-color: #1a6fd4; }
 
-.tab-btn:hover { color: var(--text); background: none; transform: none; }
-.tab-btn:active { transform: none; }
-.tab-btn.active { color: var(--text); border-bottom: 2px solid var(--red); }
-.tab-btn.ss-tab.active { border-bottom-color: #5599e8; color: #5599e8; }
-
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-
-/* ── DASHBOARD ── */
-.controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 28px;
-  flex-wrap: wrap;
-}
-
-select {
-  background: var(--card);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 8px 14px;
-  font-family: 'Barlow', sans-serif;
-  font-size: 0.9rem;
-  cursor: pointer;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
+.controls { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; flex-wrap: wrap; }
+select { background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 8px 14px; font-family: 'Barlow', sans-serif; font-size: 0.9rem; cursor: pointer; outline: none; transition: border-color 0.2s; }
 select:hover, select:focus { border-color: var(--blue); }
-
-button {
-  background: var(--red);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 18px;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
-}
-
-button:hover  { background: #e02d2d; }
+button { background: var(--red); color: white; border: none; border-radius: 6px; padding: 8px 18px; font-family: 'Barlow Condensed', sans-serif; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: background 0.15s, transform 0.1s; }
+button:hover { background: #e02d2d; }
 button:active { transform: scale(0.97); }
-
-#loading {
-  display: none;
-  align-items: center;
-  gap: 10px;
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin-bottom: 20px;
-}
-
-.spinner {
-  width: 20px; height: 20px;
-  border: 3px solid var(--border);
-  border-top-color: var(--red);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  flex-shrink: 0;
-}
-
+#loading { display: none; align-items: center; gap: 10px; color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
+.spinner { width: 20px; height: 20px; border: 3px solid var(--border); border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-  gap: 22px;
-}
-
-.event {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: border-color 0.2s;
-}
-
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 22px; }
+.event { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; transition: border-color 0.2s; }
 .event:hover { border-color: #3a3a50; }
-
 .event-summary { padding: 18px; display: flex; flex-direction: column; gap: 10px; }
-.event-header  { display: flex; align-items: center; gap: 10px; }
-
-.live-badge {
-  background: var(--red); color: white;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 3px 8px; border-radius: 4px; flex-shrink: 0;
-}
-
-.nostream-badge {
-  background: #2a2a35; color: var(--muted);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 3px 8px; border-radius: 4px; flex-shrink: 0;
-}
-
-.event-name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.25rem; font-weight: 700; line-height: 1.2;
-  cursor: pointer; display: flex; align-items: center; gap: 6px; user-select: none;
-}
+.event-header { display: flex; align-items: center; gap: 10px; }
+.live-badge { background: var(--red); color: white; font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; flex-shrink: 0; }
+.nostream-badge { background: #2a2a35; color: var(--muted); font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; flex-shrink: 0; }
+.event-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1.25rem; font-weight: 700; line-height: 1.2; cursor: pointer; display: flex; align-items: center; gap: 6px; user-select: none; }
 .event-name:hover { color: var(--blue); }
-
-.chevron {
-  font-size: 0.65rem; color: var(--muted);
-  transition: transform 0.22s; display: inline-block; flex-shrink: 0;
-}
+.chevron { font-size: 0.65rem; color: var(--muted); transition: transform 0.22s; display: inline-block; flex-shrink: 0; }
 .event.open .chevron { transform: rotate(90deg); }
-
 .event-meta { font-size: 0.82rem; color: var(--muted); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .event-meta a { color: var(--blue); text-decoration: none; font-weight: 500; }
 .event-meta a:hover { text-decoration: underline; }
-
 .no-stream-msg { font-size: 0.85rem; color: var(--muted); font-style: italic; }
 .rankings { font-size: 0.82rem; }
 .rankings-title { color: var(--muted); font-size: 0.75rem; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
@@ -211,7 +63,6 @@ button:active { transform: scale(0.97); }
 .rankings td:first-child { color: var(--muted); width: 24px; }
 .rankings td.team { color: var(--blue); font-weight: 600; font-family: 'Barlow Condensed', sans-serif; font-size: 0.95rem; }
 .rankings td.record { color: var(--muted); text-align: right; }
-
 .schedule-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 4px; }
 .schedule-table th { color: var(--muted); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 0 8px 5px 0; text-align: left; border-bottom: 1px solid var(--border); }
 .schedule-table th:last-child { text-align: right; }
@@ -221,28 +72,18 @@ button:active { transform: scale(0.97); }
 .schedule-match-key { font-family: 'Barlow Condensed', sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--blue); }
 .schedule-table tr.next-row .schedule-match-key { color: var(--red); }
 .eta-cell { font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
-
-.on-field {
-  color: var(--red); font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
-  font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
-  animation: blink-red 1s ease-in-out infinite;
-}
+.on-field { color: var(--red); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; animation: blink-red 1s ease-in-out infinite; }
 @keyframes blink-red { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
-
 .schedule-title { color: var(--muted); font-size: 0.75rem; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
 .empty { color: var(--muted); font-size: 1rem; padding: 20px 0; }
-
 .event-panel { display: none; flex-direction: column; border-top: 1px solid var(--border); background: var(--panel); }
 .event.open .event-panel { display: flex; }
-
 .panel-stream iframe { width: 100%; height: 270px; border: none; background: #000; display: block; }
-.panel-stream .no-stream-msg { padding: 16px 18px; }
-
+.panel-stream .no-stream-msg { padding: 16px 18px; font-size: 0.85rem; color: var(--muted); font-style: italic; }
 .panel-columns { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border); }
 .panel-col { padding: 16px 18px; }
 .panel-col:first-child { border-right: 1px solid var(--border); }
 .panel-title { color: var(--muted); font-size: 0.72rem; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
-
 .full-rank-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
 .full-rank-table th { color: var(--muted); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 0 6px 6px 0; text-align: left; border-bottom: 1px solid var(--border); }
 .full-rank-table th:last-child { text-align: right; }
@@ -250,7 +91,6 @@ button:active { transform: scale(0.97); }
 .full-rank-table td:first-child { color: var(--muted); width: 22px; }
 .full-rank-table td.team { color: var(--blue); font-weight: 600; font-family: 'Barlow Condensed', sans-serif; font-size: 0.92rem; }
 .full-rank-table td.record { color: var(--muted); text-align: right; }
-
 .matches-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
 .matches-table th { color: var(--muted); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 0 0 6px 0; text-align: left; border-bottom: 1px solid var(--border); }
 .matches-table td { padding: 5px 0; border-bottom: 1px solid #1a1a24; vertical-align: top; }
@@ -261,176 +101,162 @@ button:active { transform: scale(0.97); }
 .teams-red { color: #ff9a9a; } .teams-blue { color: #9ac8ff; }
 .panel-empty { color: var(--muted); font-size: 0.82rem; font-style: italic; }
 
-/* ── SCREENSHARE BOT ── */
+/* MULTIVIEW */
+.mv-controls { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+.mv-section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
+.mv-layout-picker { display: flex; flex-direction: column; }
+.mv-layout-options { display: flex; flex-wrap: wrap; gap: 6px; }
+.mv-layout-btn { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; color: var(--muted); font-family: 'Barlow Condensed', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; transition: border-color 0.15s, color 0.15s, background 0.15s; white-space: nowrap; }
+.mv-layout-btn:hover { border-color: #3a3a50; color: var(--text); }
+.mv-layout-btn:active { transform: scale(0.97); }
+.mv-layout-btn.active { border-color: var(--red); color: var(--text); background: #1f1218; }
+.mv-layout-btn svg { width: 22px; height: 16px; flex-shrink: 0; }
+.mv-stream-selector { display: flex; flex-direction: column; flex: 1; min-width: 200px; }
+.mv-stream-checks { display: flex; flex-wrap: wrap; gap: 6px; }
+.mv-stream-check { display: flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 0.82rem; color: var(--muted); transition: border-color 0.15s, color 0.15s; user-select: none; }
+.mv-stream-check input { display: none; }
+.mv-stream-check.checked { border-color: var(--blue); color: var(--text); }
+.mv-stream-check .check-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background 0.15s; }
+.mv-stream-check.checked .check-dot { background: var(--blue); }
+.mv-stream-check .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); flex-shrink: 0; animation: blink-red 1s ease-in-out infinite; }
+.mv-grid { display: grid; gap: 4px; }
+.mv-grid[data-layout="single"]  { grid-template-columns: 1fr; }
+.mv-grid[data-layout="vsplit"]  { grid-template-columns: 1fr 1fr; }
+.mv-grid[data-layout="hsplit"]  { grid-template-columns: 1fr; }
+.mv-grid[data-layout="1plus2"]  { grid-template-columns: 2fr 1fr; }
+.mv-grid[data-layout="quad"]    { grid-template-columns: 1fr 1fr; }
+.mv-grid[data-layout="1plus3"]  { grid-template-columns: 2fr 1fr; }
+.mv-grid[data-layout="1plus4"]  { grid-template-columns: 3fr 1fr; }
+.mv-grid[data-layout="hex"]     { grid-template-columns: 1fr 1fr 1fr; }
+.mv-grid[data-layout="1plus6"]  { grid-template-columns: 2fr 1fr 1fr; }
+.mv-grid[data-layout="octo"]    { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.mv-grid[data-layout="octo-v"]  { grid-template-columns: 1fr 1fr; }
+.mv-grid[data-layout="nona"]    { grid-template-columns: 1fr 1fr 1fr; }
+.mv-grid[data-layout="all"]     { grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); }
+.mv-grid[data-layout="1plus2"] .mv-slot:first-child { grid-row: span 2; }
+.mv-grid[data-layout="1plus3"] .mv-slot:first-child { grid-row: span 3; }
+.mv-grid[data-layout="1plus4"] .mv-slot:first-child { grid-row: span 4; }
+.mv-grid[data-layout="1plus6"] .mv-slot:first-child { grid-row: span 3; }
+.mv-slot { background: #000; border-radius: 6px; overflow: hidden; position: relative; min-height: 0; }
+.mv-slot iframe { width: 100%; height: 100%; min-height: 200px; border: none; display: block; }
+.mv-slot-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.75)); padding: 18px 10px 6px; font-family: 'Barlow Condensed', sans-serif; font-size: 0.8rem; font-weight: 600; color: #fff; pointer-events: none; display: flex; align-items: center; gap: 6px; }
+.mv-slot-label .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); animation: blink-red 1s ease-in-out infinite; flex-shrink: 0; }
+.mv-no-streams { color: var(--muted); font-size: 0.9rem; font-style: italic; padding: 20px 0; }
+
+/* SCREENSHARE BOT */
 #ss-root { max-width: 820px; }
-
 .ss-mode-toggle { display: flex; gap: 6px; margin-bottom: 16px; }
-
-.ss-mode-btn {
-  background: var(--card); border: 1px solid var(--border); color: var(--muted);
-  border-radius: 6px; padding: 6px 16px;
-  font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; font-weight: 600;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  cursor: pointer; transition: all 0.2s;
-}
+.ss-mode-btn { background: var(--card); border: 1px solid var(--border); color: var(--muted); border-radius: 6px; padding: 6px 16px; font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
 .ss-mode-btn:hover { color: var(--text); border-color: var(--muted); background: var(--card); transform: none; }
 .ss-mode-btn:active { transform: none; }
-.ss-mode-btn.active { background: rgba(85,153,232,0.12); border-color: #5599e8; color: #5599e8; }
-
-.ss-banner {
-  border-radius: 8px; padding: 11px 16px; margin-bottom: 16px;
-  font-size: 0.85rem; color: var(--muted);
-  display: flex; align-items: flex-start; gap: 10px; line-height: 1.6;
-}
+.ss-mode-btn.active { background: rgba(26,111,212,0.15); border-color: #5599e8; color: #5599e8; }
+.ss-banner { border-radius: 8px; padding: 11px 16px; margin-bottom: 16px; font-size: 0.85rem; color: var(--muted); display: flex; align-items: flex-start; gap: 10px; line-height: 1.6; }
 .ss-banner.green  { background: rgba(0,229,160,0.05);   border: 1px solid rgba(0,229,160,0.18); }
 .ss-banner.yellow { background: rgba(255,209,102,0.05); border: 1px solid rgba(255,209,102,0.2); }
 .ss-banner strong { color: var(--text); }
 .ss-banner code { background: rgba(255,255,255,0.07); padding: 1px 6px; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 0.78rem; }
-
 .sdot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
 .sdot-ok  { background: #00e5a0; box-shadow: 0 0 6px #00e5a0; animation: dpulse 2s infinite; }
 .sdot-err { background: #ff4d6d; }
 .sdot-chk { background: #ffd166; animation: dpulse 1s infinite; }
 @keyframes dpulse { 0%,100%{opacity:1;} 50%{opacity:0.25;} }
-
-.ss-input-card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-  padding: 20px; margin-bottom: 20px; position: relative; overflow: hidden;
-}
-.ss-input-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, #1a6fd4, transparent); opacity: 0.6;
-}
-
+.ss-input-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; position: relative; overflow: hidden; }
+.ss-input-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, #1a6fd4, transparent); opacity: 0.6; }
 .ss-lbl { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-
 .ss-input-row { display: flex; gap: 10px; align-items: stretch; }
-
-.ss-url-input {
-  flex: 1; background: var(--panel); border: 1px solid var(--border); border-radius: 6px;
-  padding: 10px 14px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 0.85rem;
-  outline: none; transition: border-color 0.2s;
-}
+.ss-url-input { flex: 1; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 0.85rem; outline: none; transition: border-color 0.2s; }
 .ss-url-input::placeholder { color: var(--muted); }
 .ss-url-input:focus { border-color: #5599e8; }
-
-.ss-run-btn {
-  background: #1a6fd4; color: white; border: none; border-radius: 6px;
-  padding: 10px 22px; font-family: 'Barlow Condensed', sans-serif; font-size: 0.95rem;
-  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-  cursor: pointer; transition: all 0.2s; white-space: nowrap;
-}
+.ss-run-btn { background: #1a6fd4; color: white; border: none; border-radius: 6px; padding: 10px 22px; font-family: 'Barlow Condensed', sans-serif; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
 .ss-run-btn:hover:not(:disabled) { background: #2278e0; transform: none; box-shadow: 0 4px 16px rgba(26,111,212,0.4); }
 .ss-run-btn:active { transform: scale(0.97); }
 .ss-run-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-
 .ss-api-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
 .ss-api-lbl { font-size: 0.72rem; font-family: 'DM Mono', monospace; color: var(--muted); white-space: nowrap; }
-.ss-api-input {
-  flex: 1; background: var(--panel); border: 1px solid var(--border); border-radius: 6px;
-  padding: 7px 12px; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.78rem;
-  outline: none; transition: border-color 0.2s;
-}
+.ss-api-input { flex: 1; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 7px 12px; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.78rem; outline: none; transition: border-color 0.2s; }
 .ss-api-input:focus { border-color: #5599e8; color: var(--text); }
-
 .ss-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 20px; }
 .ss-stat { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; display: flex; flex-direction: column; gap: 3px; }
 .ss-stat-val { font-family: 'Barlow Condensed', sans-serif; font-size: 1.8rem; font-weight: 700; line-height: 1; }
 .ss-stat-lbl { font-size: 0.7rem; font-family: 'Barlow Condensed', sans-serif; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-.s-total .ss-stat-val { color: var(--text); }
-.s-live  .ss-stat-val { color: #00e5a0; }
-.s-err   .ss-stat-val { color: #ff4d6d; }
-
+.s-total .ss-stat-val{color:var(--text);} .s-live .ss-stat-val{color:#00e5a0;} .s-err .ss-stat-val{color:#ff4d6d;}
 .ss-table { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
 .ss-table-hdr { display: flex; align-items: center; justify-content: space-between; padding: 13px 18px; border-bottom: 1px solid var(--border); }
 .ss-table-ttl { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
-
-.ss-clr {
-  background: none; border: 1px solid var(--border); color: var(--muted);
-  border-radius: 5px; padding: 3px 10px; font-size: 0.78rem; cursor: pointer;
-  font-family: 'Barlow', sans-serif; transition: all 0.2s;
-  letter-spacing: normal; text-transform: none; font-weight: 400;
-}
+.ss-clr { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 5px; padding: 3px 10px; font-size: 0.78rem; cursor: pointer; font-family: 'Barlow', sans-serif; transition: all 0.2s; letter-spacing: normal; text-transform: none; font-weight: 400; }
 .ss-clr:hover { color: #ff4d6d; border-color: #ff4d6d; background: none; transform: none; }
-
 .ss-empty { padding: 44px 24px; text-align: center; color: var(--muted); font-size: 0.88rem; }
-
-.ss-row {
-  display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 14px;
-  padding: 13px 18px; border-bottom: 1px solid var(--border);
-  transition: background 0.15s; animation: fadeUp 0.25s ease;
-}
+.ss-row { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 14px; padding: 13px 18px; border-bottom: 1px solid var(--border); transition: background 0.15s; animation: fadeUp 0.25s ease; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(-5px);} to{opacity:1;transform:translateY(0);} }
 .ss-row:last-child { border-bottom: none; }
 .ss-row:hover { background: rgba(255,255,255,0.02); }
-
 .ss-row-url { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px; }
 .ss-row-link { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: #5599e8; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; display: block; }
 .ss-row-link:hover { text-decoration: underline; }
 .ss-row-err { font-size: 0.78rem; color: #ff4d6d; font-family: 'DM Mono', monospace; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
 .ss-badge { display: inline-flex; align-items: center; gap: 5px; border-radius: 4px; padding: 3px 10px; font-size: 0.72rem; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
-.b-queued  { background: rgba(107,107,128,0.15); color: var(--muted); }
-.b-running { background: rgba(255,209,102,0.12); color: #ffd166; }
-.b-live    { background: rgba(0,229,160,0.14);   color: #00e5a0; border: 1px solid rgba(0,229,160,0.25); }
-.b-stopped { background: rgba(107,107,128,0.12); color: var(--muted); }
-.b-error   { background: rgba(255,77,109,0.12);  color: #ff4d6d; }
-.ss-spin { animation: spin 1s linear infinite; display: inline-block; }
-
-.ss-acts { display: flex; align-items: center; gap: 6px; }
-
-.ss-cp {
-  background: none; border: 1px solid var(--border); color: var(--muted);
-  border-radius: 5px; padding: 3px 9px; font-size: 0.72rem; cursor: pointer;
-  font-family: 'Barlow', sans-serif; transition: all 0.2s;
-  text-transform: none; letter-spacing: normal; font-weight: 400;
-}
-.ss-cp:hover, .ss-cp.ok { color: #00e5a0; border-color: #00e5a0; background: none; transform: none; }
-
-.ss-stop {
-  background: none; border: 1px solid rgba(255,77,109,0.32); color: #ff4d6d;
-  border-radius: 5px; padding: 3px 9px; font-size: 0.72rem; cursor: pointer;
-  font-family: 'Barlow', sans-serif; transition: all 0.2s;
-  text-transform: none; letter-spacing: normal; font-weight: 400;
-}
-.ss-stop:hover { background: rgba(255,77,109,0.08); transform: none; }
-
+.b-queued{background:rgba(107,107,128,0.15);color:var(--muted);}
+.b-running{background:rgba(255,209,102,0.12);color:#ffd166;}
+.b-live{background:rgba(0,229,160,0.14);color:#00e5a0;border:1px solid rgba(0,229,160,0.25);}
+.b-stopped{background:rgba(107,107,128,0.12);color:var(--muted);}
+.b-error{background:rgba(255,77,109,0.12);color:#ff4d6d;}
+.ss-spin{animation:spin 1s linear infinite;display:inline-block;}
+.ss-acts{display:flex;align-items:center;gap:6px;}
+.ss-cp { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 5px; padding: 3px 9px; font-size: 0.72rem; cursor: pointer; font-family: 'Barlow', sans-serif; transition: all 0.2s; text-transform: none; letter-spacing: normal; font-weight: 400; }
+.ss-cp:hover,.ss-cp.ok{color:#00e5a0;border-color:#00e5a0;background:none;transform:none;}
+.ss-stop { background: none; border: 1px solid rgba(255,77,109,0.32); color: #ff4d6d; border-radius: 5px; padding: 3px 9px; font-size: 0.72rem; cursor: pointer; font-family: 'Barlow', sans-serif; transition: all 0.2s; text-transform: none; letter-spacing: normal; font-weight: 400; }
+.ss-stop:hover{background:rgba(255,77,109,0.08);transform:none;}
 </style>
 </head>
 <body>
 
-<header>
-  <h1>FRC <span>Live</span></h1>
-</header>
+<header><h1>FRC <span>Live</span></h1></header>
 <div id="date"></div>
 
-<!-- TABS -->
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('dashboard', this)">📅 Dashboard</button>
+  <button class="tab-btn" onclick="switchTab('multiview', this)">📺 Multiview</button>
   <button class="tab-btn ss-tab" onclick="switchTab('screenshare', this)">📡 Screenshare Bot</button>
 </div>
 
-<!-- DASHBOARD TAB -->
-<div id="tab-dashboard" class="tab-panel active">
-  <div class="controls">
-    <select id="week">
-      <option value="all">All Weeks</option>
-      <option value="0">Week 1</option>
-      <option value="1">Week 2</option>
-      <option value="2">Week 3</option>
-      <option value="3">Week 4</option>
-      <option value="4">Week 5</option>
-      <option value="5">Week 6</option>
-      <option value="6">Week 7</option>
-    </select>
-    <button onclick="load()">↺ Refresh</button>
-  </div>
-  <div id="loading"><div class="spinner"></div>Loading events...</div>
+<div class="controls">
+  <select id="week">
+    <option value="all">All Weeks</option>
+    <option value="0">Week 1</option>
+    <option value="1">Week 2</option>
+    <option value="2">Week 3</option>
+    <option value="3">Week 4</option>
+    <option value="4">Week 5</option>
+    <option value="5">Week 6</option>
+    <option value="6">Week 7</option>
+  </select>
+  <button onclick="load()">↺ Refresh</button>
+</div>
+
+<div id="loading"><div class="spinner"></div>Loading events...</div>
+
+<!-- DASHBOARD -->
+<div id="view-dashboard">
   <div class="grid" id="streams"></div>
 </div>
 
-<!-- SCREENSHARE BOT TAB -->
-<div id="tab-screenshare" class="tab-panel">
+<!-- MULTIVIEW -->
+<div id="view-multiview" style="display:none">
+  <div class="mv-controls">
+    <div class="mv-layout-picker">
+      <div class="mv-section-label">Layout</div>
+      <div class="mv-layout-options" id="mv-layout-options"></div>
+    </div>
+    <div class="mv-stream-selector">
+      <div class="mv-section-label">Streams</div>
+      <div class="mv-stream-checks" id="mv-stream-checks"></div>
+    </div>
+  </div>
+  <div id="mv-grid-wrap"></div>
+</div>
+
+<!-- SCREENSHARE BOT -->
+<div id="view-screenshare" style="display:none">
   <div id="ss-root"></div>
 </div>
 
@@ -439,11 +265,17 @@ button:active { transform: scale(0.97); }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 
 <script>
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  btn.classList.add('active');
+let currentTab = "dashboard";
+let cachedEvents = null;
+
+function switchTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("view-dashboard").style.display   = tab === "dashboard"   ? "block" : "none";
+  document.getElementById("view-multiview").style.display   = tab === "multiview"   ? "block" : "none";
+  document.getElementById("view-screenshare").style.display = tab === "screenshare" ? "block" : "none";
+  if (tab === "multiview" && cachedEvents) renderMultiview(cachedEvents);
 }
 
 function setDate() {
@@ -458,12 +290,15 @@ async function load() {
   const streams = document.getElementById("streams");
   loading.style.display = "flex";
   streams.innerHTML = "";
+  document.getElementById("mv-grid-wrap").innerHTML = "";
   try {
     const res = await fetch(`/.netlify/functions/dashboard?week=${encodeURIComponent(week)}`);
     if (!res.ok) throw new Error("Server error: " + res.status);
     const data = await res.json();
+    cachedEvents = data;
     loading.style.display = "none";
     render(data);
+    if (currentTab === "multiview") renderMultiview(data);
     updateCountdowns();
   } catch (err) {
     loading.style.display = "none";
@@ -475,66 +310,37 @@ async function load() {
 function render(events) {
   const div = document.getElementById("streams");
   div.innerHTML = "";
-  if (!events || events.length === 0) {
-    div.innerHTML = "<p class='empty'>No events are scheduled for today.</p>";
-    return;
-  }
+  if (!events || events.length === 0) { div.innerHTML = "<p class='empty'>No events are scheduled for today.</p>"; return; }
   const twitchParent = encodeURIComponent(location.hostname);
   events.forEach(e => {
-    const badge = (e.type !== "none" && e.isLive)
-      ? `<span class="live-badge">🔴 Live</span>`
-      : `<span class="nostream-badge">📅 Today</span>`;
+    const badge = (e.type !== "none" && e.isLive) ? `<span class="live-badge">🔴 Live</span>` : `<span class="nostream-badge">📅 Today</span>`;
     const tbaLink = `<a href="https://thebluealliance.com/event/${e.key}" target="_blank">↗ View on TBA</a>`;
-    const streamLink = e.type !== "none"
-      ? `<a href="${e.link}" target="_blank">↗ Open Stream</a> ${tbaLink}` : tbaLink;
-
+    const streamLink = e.type !== "none" ? `<a href="${e.link}" target="_blank">↗ Open Stream</a> ${tbaLink}` : tbaLink;
     let scheduleHTML = "";
     if (e.upcomingSchedule && e.upcomingSchedule.length) {
-      const rows = e.upcomingSchedule.map((m, i) =>
-        `<tr class="${i===0?"next-row":""}" data-time="${m.time}">
-          <td><span class="schedule-match-key">${m.key}</span></td>
-          <td class="eta-cell" data-time="${m.time}">—</td>
-        </tr>`).join("");
-      scheduleHTML = `<div class="schedule-title">⏭ Upcoming Matches</div>
-        <table class="schedule-table"><thead><tr><th>Match</th><th style="text-align:right">ETA</th></tr></thead><tbody>${rows}</tbody></table>`;
+      const rows = e.upcomingSchedule.map((m,i) => `<tr class="${i===0?"next-row":""}" data-time="${m.time}"><td><span class="schedule-match-key">${m.key}</span></td><td class="eta-cell" data-time="${m.time}">—</td></tr>`).join("");
+      scheduleHTML = `<div class="schedule-title">⏭ Upcoming Matches</div><table class="schedule-table"><thead><tr><th>Match</th><th style="text-align:right">ETA</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
-
     let rankingsHTML = "";
     if (e.rankings && e.rankings.length) {
-      const rows = e.rankings.map(r =>
-        `<tr><td>${r.rank}</td><td class="team">${r.team}</td><td class="record">${r.wins}-${r.losses}${r.ties?"-"+r.ties:""}</td></tr>`).join("");
+      const rows = e.rankings.map(r => `<tr><td>${r.rank}</td><td class="team">${r.team}</td><td class="record">${r.wins}-${r.losses}${r.ties?"-"+r.ties:""}</td></tr>`).join("");
       rankingsHTML = `<div class="rankings"><div class="rankings-title">🏆 Top 5 Rankings</div><table>${rows}</table></div>`;
     }
-
-    let panelStream = "";
-    if (e.type === "youtube") {
-      panelStream = `<div class="panel-stream"><iframe src="https://www.youtube.com/embed/${e.channel}?autoplay=0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe></div>`;
-    } else if (e.type === "twitch") {
-      panelStream = `<div class="panel-stream"><iframe src="https://player.twitch.tv/?channel=${e.channel}&parent=${twitchParent}" allowfullscreen></iframe></div>`;
-    } else {
-      panelStream = `<div class="panel-stream"><div class="no-stream-msg">No stream listed — check TBA or the event's website for a link.</div></div>`;
-    }
-
+    let panelStream = e.type === "youtube"
+      ? `<div class="panel-stream"><iframe src="https://www.youtube.com/embed/${e.channel}?autoplay=0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe></div>`
+      : e.type === "twitch"
+      ? `<div class="panel-stream"><iframe src="https://player.twitch.tv/?channel=${e.channel}&parent=${twitchParent}" allowfullscreen></iframe></div>`
+      : `<div class="panel-stream"><div class="no-stream-msg">No stream listed — check TBA or the event's website.</div></div>`;
     let fullRankHTML = `<div class="panel-empty">No rankings yet.</div>`;
     if (e.fullRankings && e.fullRankings.length) {
-      const rows = e.fullRankings.map(r =>
-        `<tr><td>${r.rank}</td><td class="team">${r.team}</td><td class="record">${r.wins}-${r.losses}${r.ties?"-"+r.ties:""}</td></tr>`).join("");
+      const rows = e.fullRankings.map(r => `<tr><td>${r.rank}</td><td class="team">${r.team}</td><td class="record">${r.wins}-${r.losses}${r.ties?"-"+r.ties:""}</td></tr>`).join("");
       fullRankHTML = `<table class="full-rank-table"><thead><tr><th>#</th><th>Team</th><th>W-L</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
-
     let recentHTML = `<div class="panel-empty">No completed matches yet.</div>`;
     if (e.recentMatches && e.recentMatches.length) {
-      const rows = e.recentMatches.map(m =>
-        `<tr>
-          <td class="match-key">${m.key}</td>
-          <td>
-            <div class="score-line"><span class="score-red">${m.redScore}</span><span class="score-sep">–</span><span class="score-blue">${m.blueScore}</span></div>
-            <div class="teams-line"><span class="teams-red">${m.redTeams.join(", ")}</span><span class="score-sep"> vs </span><span class="teams-blue">${m.blueTeams.join(", ")}</span></div>
-          </td>
-        </tr>`).join("");
+      const rows = e.recentMatches.map(m => `<tr><td class="match-key">${m.key}</td><td><div class="score-line"><span class="score-red">${m.redScore}</span><span class="score-sep">–</span><span class="score-blue">${m.blueScore}</span></div><div class="teams-line"><span class="teams-red">${m.redTeams.join(", ")}</span><span class="score-sep"> vs </span><span class="teams-blue">${m.blueTeams.join(", ")}</span></div></td></tr>`).join("");
       recentHTML = `<table class="matches-table"><thead><tr><th>Match</th><th>Result</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
-
     const block = document.createElement("div");
     block.className = "event";
     block.innerHTML = `
@@ -543,8 +349,7 @@ function render(events) {
         <div class="event-meta"><span>${e.city}, ${e.country}</span><span>Week ${Number(e.week)+1}</span>${streamLink}</div>
         ${scheduleHTML}${rankingsHTML}
       </div>
-      <div class="event-panel">
-        ${panelStream}
+      <div class="event-panel">${panelStream}
         <div class="panel-columns">
           <div class="panel-col"><div class="panel-title">Full Rankings</div>${fullRankHTML}</div>
           <div class="panel-col"><div class="panel-title">Last 10 Matches</div>${recentHTML}</div>
@@ -555,15 +360,103 @@ function render(events) {
   });
 }
 
+const MV_LAYOUTS = [
+  { id:"single", label:"Single",     slots:1,  icon:`<svg viewBox="0 0 22 16"><rect x="1" y="1" width="20" height="14" rx="1" fill="currentColor"/></svg>` },
+  { id:"vsplit", label:"Vert Split", slots:2,  icon:`<svg viewBox="0 0 22 16"><rect x="1" y="1" width="9" height="14" rx="1" fill="currentColor"/><rect x="12" y="1" width="9" height="14" rx="1" fill="currentColor"/></svg>` },
+  { id:"hsplit", label:"Horiz Split",slots:2,  icon:`<svg viewBox="0 0 22 16"><rect x="1" y="1" width="20" height="6" rx="1" fill="currentColor"/><rect x="1" y="9" width="20" height="6" rx="1" fill="currentColor"/></svg>` },
+  { id:"1plus2", label:"1+2",        slots:3,  icon:`<svg viewBox="0 0 22 16"><rect x="1" y="1" width="13" height="14" rx="1" fill="currentColor"/><rect x="16" y="1" width="5" height="6" rx="1" fill="currentColor"/><rect x="16" y="9" width="5" height="6" rx="1" fill="currentColor"/></svg>` },
+  { id:"quad",   label:"Quad",       slots:4,  icon:`<svg viewBox="0 0 22 16"><rect x="1" y="1" width="9" height="6" rx="1" fill="currentColor"/><rect x="12" y="1" width="9" height="6" rx="1" fill="currentColor"/><rect x="1" y="9" width="9" height="6" rx="1" fill="currentColor"/><rect x="12" y="9" width="9" height="6" rx="1" fill="currentColor"/></svg>` },
+  { id:"1plus3", label:"1+3",        slots:4,  icon:`<svg viewBox="0 0 22 16"><rect x="1" y="1" width="13" height="14" rx="1" fill="currentColor"/><rect x="16" y="1" width="5" height="4" rx="1" fill="currentColor"/><rect x="16" y="6" width="5" height="4" rx="1" fill="currentColor"/><rect x="16" y="11" width="5" height="4" rx="1" fill="currentColor"/></svg>` },
+  { id:"1plus4", label:"1+4",        slots:5,  icon:`<svg viewBox="0 0 22 16"><rect x="1" y="1" width="14" height="14" rx="1" fill="currentColor"/><rect x="17" y="1" width="4" height="3" rx="1" fill="currentColor"/><rect x="17" y="5" width="4" height="3" rx="1" fill="currentColor"/><rect x="17" y="9" width="4" height="3" rx="1" fill="currentColor"/><rect x="17" y="13" width="4" height="2" rx="1" fill="currentColor"/></svg>` },
+  { id:"hex",    label:"Hex",        slots:6,  icon:`<svg viewBox="0 0 22 16"><rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor"/><rect x="8" y="1" width="6" height="6" rx="1" fill="currentColor"/><rect x="15" y="1" width="6" height="6" rx="1" fill="currentColor"/><rect x="1" y="9" width="6" height="6" rx="1" fill="currentColor"/><rect x="8" y="9" width="6" height="6" rx="1" fill="currentColor"/><rect x="15" y="9" width="6" height="6" rx="1" fill="currentColor"/></svg>` },
+  { id:"1plus6", label:"1+6",        slots:7,  icon:`<svg viewBox="0 0 22 16"><rect x="1" y="1" width="12" height="14" rx="1" fill="currentColor"/><rect x="14" y="1" width="3" height="4" rx="1" fill="currentColor"/><rect x="18" y="1" width="3" height="4" rx="1" fill="currentColor"/><rect x="14" y="6" width="3" height="4" rx="1" fill="currentColor"/><rect x="18" y="6" width="3" height="4" rx="1" fill="currentColor"/><rect x="14" y="11" width="3" height="4" rx="1" fill="currentColor"/><rect x="18" y="11" width="3" height="4" rx="1" fill="currentColor"/></svg>` },
+  { id:"octo",   label:"Octo",       slots:8,  icon:`<svg viewBox="0 0 22 16"><rect x="1" y="1" width="4" height="6" rx="1" fill="currentColor"/><rect x="6" y="1" width="4" height="6" rx="1" fill="currentColor"/><rect x="11" y="1" width="4" height="6" rx="1" fill="currentColor"/><rect x="16" y="1" width="5" height="6" rx="1" fill="currentColor"/><rect x="1" y="9" width="4" height="6" rx="1" fill="currentColor"/><rect x="6" y="9" width="4" height="6" rx="1" fill="currentColor"/><rect x="11" y="9" width="4" height="6" rx="1" fill="currentColor"/><rect x="16" y="9" width="5" height="6" rx="1" fill="currentColor"/></svg>` },
+  { id:"nona",   label:"Nona",       slots:9,  icon:`<svg viewBox="0 0 22 16"><rect x="1" y="1" width="6" height="4" rx="1" fill="currentColor"/><rect x="8" y="1" width="6" height="4" rx="1" fill="currentColor"/><rect x="15" y="1" width="6" height="4" rx="1" fill="currentColor"/><rect x="1" y="6" width="6" height="4" rx="1" fill="currentColor"/><rect x="8" y="6" width="6" height="4" rx="1" fill="currentColor"/><rect x="15" y="6" width="6" height="4" rx="1" fill="currentColor"/><rect x="1" y="11" width="6" height="4" rx="1" fill="currentColor"/><rect x="8" y="11" width="6" height="4" rx="1" fill="currentColor"/><rect x="15" y="11" width="6" height="4" rx="1" fill="currentColor"/></svg>` },
+  { id:"all",    label:"All Live",   slots:99, icon:`<svg viewBox="0 0 22 16"><circle cx="4" cy="8" r="2.5" fill="currentColor"/><circle cx="11" cy="8" r="2.5" fill="currentColor"/><circle cx="18" cy="8" r="2.5" fill="currentColor"/></svg>` },
+];
+
+let mvLayout = "quad";
+let mvSelectedKeys = new Set();
+let mvAllKeys = [];
+
+function initMultiviewControls(events) {
+  const layoutWrap = document.getElementById("mv-layout-options");
+  layoutWrap.innerHTML = "";
+  MV_LAYOUTS.forEach(l => {
+    const btn = document.createElement("button");
+    btn.className = "mv-layout-btn" + (l.id === mvLayout ? " active" : "");
+    btn.innerHTML = l.icon + l.label;
+    btn.onclick = () => {
+      mvLayout = l.id;
+      document.querySelectorAll(".mv-layout-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      applyMultiviewLayout();
+    };
+    layoutWrap.appendChild(btn);
+  });
+  const streamable = events.filter(e => e.type !== "none");
+  mvAllKeys = streamable.map(e => e.key);
+  const live = streamable.filter(e => e.isLive).map(e => e.key);
+  mvSelectedKeys = new Set(live.length ? live : mvAllKeys);
+  const checksWrap = document.getElementById("mv-stream-checks");
+  checksWrap.innerHTML = "";
+  streamable.forEach(e => {
+    const label = document.createElement("label");
+    label.className = "mv-stream-check" + (mvSelectedKeys.has(e.key) ? " checked" : "");
+    const dot = e.isLive ? `<span class="live-dot"></span>` : `<span class="check-dot"></span>`;
+    label.innerHTML = `<input type="checkbox" ${mvSelectedKeys.has(e.key) ? "checked" : ""}>${dot}${e.name}`;
+    label.querySelector("input").addEventListener("change", ev => {
+      if (ev.target.checked) { mvSelectedKeys.add(e.key); label.classList.add("checked"); }
+      else { mvSelectedKeys.delete(e.key); label.classList.remove("checked"); }
+      applyMultiviewLayout();
+    });
+    checksWrap.appendChild(label);
+  });
+}
+
+function applyMultiviewLayout() {
+  if (!cachedEvents) return;
+  const twitchParent = encodeURIComponent(location.hostname);
+  const wrap = document.getElementById("mv-grid-wrap");
+  const layout = MV_LAYOUTS.find(l => l.id === mvLayout);
+  const streamable = cachedEvents.filter(e => e.type !== "none");
+  let toShow = mvLayout === "all"
+    ? streamable.filter(e => mvSelectedKeys.has(e.key))
+    : streamable.filter(e => mvSelectedKeys.has(e.key)).slice(0, layout.slots);
+  if (toShow.length === 0) { wrap.innerHTML = `<p class="mv-no-streams">No streams selected.</p>`; return; }
+  const grid = document.createElement("div");
+  grid.className = "mv-grid";
+  grid.dataset.layout = mvLayout;
+  if (mvLayout === "all") {
+    const n = toShow.length;
+    grid.style.gridTemplateColumns = `repeat(${n<=1?1:n<=2?2:n<=4?2:n<=6?3:n<=9?3:4}, 1fr)`;
+  }
+  toShow.forEach(e => {
+    const slot = document.createElement("div");
+    slot.className = "mv-slot";
+    const src = e.type === "youtube"
+      ? `https://www.youtube.com/embed/${e.channel}?autoplay=0`
+      : `https://player.twitch.tv/?channel=${e.channel}&parent=${twitchParent}`;
+    const dot = e.isLive ? `<span class="live-dot"></span>` : "";
+    slot.innerHTML = `<iframe src="${src}" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe><div class="mv-slot-label">${dot}${e.name}</div>`;
+    grid.appendChild(slot);
+  });
+  wrap.innerHTML = "";
+  wrap.appendChild(grid);
+}
+
+function renderMultiview(events) {
+  if (!events || events.length === 0) { document.getElementById("mv-grid-wrap").innerHTML = "<p class='empty'>No events scheduled today.</p>"; return; }
+  initMultiviewControls(events);
+  applyMultiviewLayout();
+}
+
 function updateCountdowns() {
   const now = Date.now() / 1000;
   document.querySelectorAll(".eta-cell[data-time]").forEach(cell => {
     const diff = parseInt(cell.dataset.time, 10) - now;
     if (diff <= 0) { cell.innerHTML = `<span class="on-field">On Field</span>`; }
-    else {
-      const h = Math.floor(diff / 3600), m = Math.floor((diff % 3600) / 60);
-      cell.textContent = h > 0 ? `~${h}h ${m}m` : `~${m} min`;
-    }
+    else { const h = Math.floor(diff/3600), m = Math.floor((diff%3600)/60); cell.textContent = h>0?`~${h}h ${m}m`:`~${m} min`; }
   });
 }
 
@@ -578,24 +471,14 @@ const { useState, useEffect, useRef, useCallback } = React;
 const LOCAL = "http://localhost:5050";
 
 function SSBadge({ status }) {
-  const m = {
-    queued:  {i:"○",t:"Queued",  c:"b-queued"},
-    running: {i:"◌",t:"Running", c:"b-running",spin:true},
-    done:    {i:"●",t:"LIVE",    c:"b-live"},
-    stopped: {i:"○",t:"Stopped", c:"b-stopped"},
-    error:   {i:"✕",t:"Error",   c:"b-error"},
-  };
+  const m = { queued:{i:"○",t:"Queued",c:"b-queued"}, running:{i:"◌",t:"Running",c:"b-running",spin:true}, done:{i:"●",t:"LIVE",c:"b-live"}, stopped:{i:"○",t:"Stopped",c:"b-stopped"}, error:{i:"✕",t:"Error",c:"b-error"} };
   const s = m[status]||m.queued;
   return <span className={`ss-badge ${s.c}`}><span className={s.spin?"ss-spin":""}>{s.i}</span>{s.t}</span>;
 }
 
 function CopyBtn({ text }) {
   const [ok, setOk] = useState(false);
-  return (
-    <button className={`ss-cp${ok?" ok":""}`} onClick={()=>{
-      navigator.clipboard.writeText(text).then(()=>{ setOk(true); setTimeout(()=>setOk(false),1500); });
-    }}>{ok?"✓ copied":"copy"}</button>
-  );
+  return <button className={`ss-cp${ok?" ok":""}`} onClick={()=>{ navigator.clipboard.writeText(text).then(()=>{ setOk(true); setTimeout(()=>setOk(false),1500); }); }}>{ok?"✓ copied":"copy"}</button>;
 }
 
 function JobRow({ job, onStop }) {
@@ -626,18 +509,11 @@ function ScreenshareBot() {
   const [busy, setBusy]     = useState(false);
   const [health, setHealth] = useState("unknown");
   const polls = useRef({});
-
   const base = mode==="local" ? LOCAL : remote;
 
-  useEffect(()=>{
-    setHealth("checking");
-    fetch(`${base}/api/health`).then(r=>r.json()).then(()=>setHealth("ok")).catch(()=>setHealth("error"));
-  },[base]);
+  useEffect(()=>{ setHealth("checking"); fetch(`${base}/api/health`).then(r=>r.json()).then(()=>setHealth("ok")).catch(()=>setHealth("error")); },[base]);
 
-  const sv = (k,v) => {
-    if(k==="mode"){ setMode(v); localStorage.setItem("frc_ss_mode",v); }
-    else { setRemote(v); localStorage.setItem("frc_ss_remote",v); }
-  };
+  const sv = (k,v) => { if(k==="mode"){setMode(v);localStorage.setItem("frc_ss_mode",v);}else{setRemote(v);localStorage.setItem("frc_ss_remote",v);} };
 
   const poll = useCallback((id)=>{
     if(polls.current[id]) return;
@@ -645,7 +521,7 @@ function ScreenshareBot() {
       try {
         const d = await fetch(`${base}/api/job/${id}`).then(r=>r.json());
         setJobs(p=>p.map(j=>j.id===id?{...j,...d}:j));
-        if(d.status==="error"||d.status==="stopped"){ clearInterval(polls.current[id]); delete polls.current[id]; }
+        if(d.status==="error"||d.status==="stopped"){clearInterval(polls.current[id]);delete polls.current[id];}
       } catch(e){}
     },2000);
   },[base]);
@@ -654,13 +530,9 @@ function ScreenshareBot() {
     const target=(u||url).trim(); if(!target) return;
     setBusy(true);
     try {
-      const d = await fetch(`${base}/api/screenshare`,{
-        method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url:target})
-      }).then(r=>r.json());
-      if(d.job_id){
-        setJobs(p=>[{id:d.job_id,job_id:d.job_id,url:target,status:"queued",share_link:null,host_link:null,error:null},...p]);
-        if(!u) setUrl(""); poll(d.job_id);
-      } else { alert("Error: "+(d.error||"Unknown")); }
+      const d = await fetch(`${base}/api/screenshare`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url:target})}).then(r=>r.json());
+      if(d.job_id){ setJobs(p=>[{id:d.job_id,job_id:d.job_id,url:target,status:"queued",share_link:null,error:null},...p]); if(!u)setUrl(""); poll(d.job_id); }
+      else { alert("Error: "+(d.error||"Unknown")); }
     } catch(e){
       mode==="local"
         ? alert("Local bot not reachable.\n\nRun: python local_bot.py\nThen: ngrok http 5050 --request-header-add \"ngrok-skip-browser-warning: true\"")
@@ -670,15 +542,10 @@ function ScreenshareBot() {
   };
 
   const stop = async(id)=>{
-    try {
-      await fetch(`${base}/api/job/${id}/stop`,{method:"POST"});
-      setJobs(p=>p.map(j=>j.id===id?{...j,status:"stopped"}:j));
-      if(polls.current[id]){ clearInterval(polls.current[id]); delete polls.current[id]; }
-    } catch(e){ alert("Could not stop session"); }
+    try { await fetch(`${base}/api/job/${id}/stop`,{method:"POST"}); setJobs(p=>p.map(j=>j.id===id?{...j,status:"stopped"}:j)); if(polls.current[id]){clearInterval(polls.current[id]);delete polls.current[id];} } catch(e){ alert("Could not stop"); }
   };
 
   const clear = ()=>{ setJobs([]); Object.values(polls.current).forEach(clearInterval); polls.current={}; };
-
   const stats = { total:jobs.length, live:jobs.filter(j=>j.status==="done").length, err:jobs.filter(j=>j.status==="error").length };
   const hasErr = jobs.some(j=>j.status==="error");
 
@@ -688,7 +555,6 @@ function ScreenshareBot() {
         <button className={`ss-mode-btn${mode==="local"?" active":""}`} onClick={()=>sv("mode","local")}>💻 Local PC</button>
         <button className={`ss-mode-btn${mode==="remote"?" active":""}`} onClick={()=>sv("mode","remote")}>☁️ Remote Server</button>
       </div>
-
       {mode==="local" ? (
         <div className="ss-banner green">
           <div className={`sdot ${health==="ok"?"sdot-ok":health==="checking"?"sdot-chk":"sdot-err"}`}></div>
@@ -708,15 +574,11 @@ function ScreenshareBot() {
           </div>
         </div>
       )}
-
       <div className="ss-input-card">
         <div className="ss-lbl">// stream url to screenshare</div>
         <div className="ss-input-row">
-          <input className="ss-url-input" value={url} onChange={e=>setUrl(e.target.value)}
-            onKeyDown={e=>e.key==="Enter"&&run()} placeholder="https://www.twitch.tv/firstinspires" disabled={busy} />
-          <button className="ss-run-btn" onClick={()=>run()} disabled={busy||!url.trim()}>
-            {busy?"Starting...":"▶ Run"}
-          </button>
+          <input className="ss-url-input" value={url} onChange={e=>setUrl(e.target.value)} onKeyDown={e=>e.key==="Enter"&&run()} placeholder="https://www.twitch.tv/firstinspires" disabled={busy} />
+          <button className="ss-run-btn" onClick={()=>run()} disabled={busy||!url.trim()}>{busy?"Starting...":"▶ Run"}</button>
         </div>
         {mode==="remote" && (
           <div className="ss-api-row">
@@ -724,14 +586,8 @@ function ScreenshareBot() {
             <input className="ss-api-input" value={remote} onChange={e=>sv("remote",e.target.value)} placeholder="https://your-app.railway.app" />
           </div>
         )}
-        {hasErr && (
-          <button className="ss-run-btn" style={{marginTop:10,width:"100%",background:"transparent",border:"1px solid var(--border)",color:"var(--muted)"}}
-            onClick={()=>jobs.filter(j=>j.status==="error").forEach(j=>run(j.url))}>
-            ↻ Retry failed
-          </button>
-        )}
+        {hasErr && <button className="ss-run-btn" style={{marginTop:10,width:"100%",background:"transparent",border:"1px solid var(--border)",color:"var(--muted)"}} onClick={()=>jobs.filter(j=>j.status==="error").forEach(j=>run(j.url))}>↻ Retry failed</button>}
       </div>
-
       {jobs.length>0 && (
         <div className="ss-stats">
           <div className="ss-stat s-total"><span className="ss-stat-val">{stats.total}</span><span className="ss-stat-lbl">Total</span></div>
@@ -739,16 +595,12 @@ function ScreenshareBot() {
           <div className="ss-stat s-err"><span className="ss-stat-val">{stats.err}</span><span className="ss-stat-lbl">Errors</span></div>
         </div>
       )}
-
       <div className="ss-table">
         <div className="ss-table-hdr">
           <span className="ss-table-ttl">// active sessions</span>
           {jobs.length>0 && <button className="ss-clr" onClick={clear}>Clear all</button>}
         </div>
-        {jobs.length===0
-          ? <div className="ss-empty">🤖 No sessions yet — paste a stream URL above and hit Run</div>
-          : jobs.map(j=><JobRow key={j.id} job={j} onStop={stop} />)
-        }
+        {jobs.length===0 ? <div className="ss-empty">🤖 No sessions yet — paste a stream URL above and hit Run</div> : jobs.map(j=><JobRow key={j.id} job={j} onStop={stop} />)}
       </div>
     </div>
   );
@@ -756,6 +608,5 @@ function ScreenshareBot() {
 
 ReactDOM.createRoot(document.getElementById("ss-root")).render(<ScreenshareBot />);
 </script>
-
 </body>
 </html>
