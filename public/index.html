@@ -494,6 +494,134 @@ button:active { transform: scale(0.97); }
 /* ── Multiview ── */
 #view-multiview { display: none; }
 
+/* Control bar */
+.mv-controls {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.mv-section-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+
+.mv-layout-picker { display: flex; flex-direction: column; }
+
+.mv-layout-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mv-layout-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.mv-layout-btn:hover { border-color: #3a3a50; color: var(--text); }
+.mv-layout-btn:active { transform: scale(0.97); }
+.mv-layout-btn.active { border-color: var(--red); color: var(--text); background: #1f1218; }
+.mv-layout-btn svg { width: 22px; height: 16px; flex-shrink: 0; }
+
+.mv-stream-selector { display: flex; flex-direction: column; flex: 1; min-width: 200px; }
+
+.mv-stream-checks { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.mv-stream-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--muted);
+  transition: border-color 0.15s, color 0.15s;
+  user-select: none;
+}
+.mv-stream-check input { display: none; }
+.mv-stream-check.checked { border-color: var(--blue); color: var(--text); }
+.mv-stream-check .check-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--border); flex-shrink: 0; transition: background 0.15s;
+}
+.mv-stream-check.checked .check-dot { background: var(--blue); }
+.mv-stream-check .live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--red); flex-shrink: 0;
+  animation: blink-red 1s ease-in-out infinite;
+}
+
+/* Grid layouts */
+.mv-grid { display: grid; gap: 4px; }
+.mv-grid[data-layout="single"]   { grid-template-columns: 1fr; }
+.mv-grid[data-layout="vsplit"]   { grid-template-columns: 1fr 1fr; }
+.mv-grid[data-layout="hsplit"]   { grid-template-columns: 1fr; }
+.mv-grid[data-layout="1plus2"]   { grid-template-columns: 2fr 1fr; }
+.mv-grid[data-layout="quad"]     { grid-template-columns: 1fr 1fr; }
+.mv-grid[data-layout="1plus3"]   { grid-template-columns: 2fr 1fr; }
+.mv-grid[data-layout="1plus4"]   { grid-template-columns: 3fr 1fr; }
+.mv-grid[data-layout="hex"]      { grid-template-columns: 1fr 1fr 1fr; }
+.mv-grid[data-layout="1plus6"]   { grid-template-columns: 2fr 1fr 1fr; }
+.mv-grid[data-layout="octo"]     { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.mv-grid[data-layout="octo-v"]   { grid-template-columns: 1fr 1fr; }
+.mv-grid[data-layout="nona"]     { grid-template-columns: 1fr 1fr 1fr; }
+.mv-grid[data-layout="all"]      { grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); }
+
+.mv-grid[data-layout="1plus2"] .mv-slot:first-child  { grid-row: span 2; }
+.mv-grid[data-layout="1plus3"] .mv-slot:first-child  { grid-row: span 3; }
+.mv-grid[data-layout="1plus4"] .mv-slot:first-child  { grid-row: span 4; }
+.mv-grid[data-layout="1plus6"] .mv-slot:first-child  { grid-row: span 3; }
+
+.mv-slot {
+  background: #000;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  min-height: 0;
+}
+.mv-slot iframe {
+  width: 100%; height: 100%; min-height: 200px;
+  border: none; display: block;
+}
+.mv-slot-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.75));
+  padding: 18px 10px 6px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.8rem; font-weight: 600; color: #fff;
+  pointer-events: none;
+  display: flex; align-items: center; gap: 6px;
+}
+.mv-slot-label .live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--red); animation: blink-red 1s ease-in-out infinite; flex-shrink: 0;
+}
+.mv-no-streams { color: var(--muted); font-size: 0.9rem; font-style: italic; padding: 20px 0; }
+
 .multiview-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
@@ -607,7 +735,19 @@ button:active { transform: scale(0.97); }
 
 <!-- Multiview -->
 <div id="view-multiview">
-  <div class="multiview-grid" id="multiview-streams"></div>
+
+  <div class="mv-controls">
+    <div class="mv-layout-picker">
+      <div class="mv-section-label">Layout</div>
+      <div class="mv-layout-options" id="mv-layout-options"></div>
+    </div>
+    <div class="mv-stream-selector">
+      <div class="mv-section-label">Streams</div>
+      <div class="mv-stream-checks" id="mv-stream-checks"></div>
+    </div>
+  </div>
+
+  <div id="mv-grid-wrap"></div>
 </div>
 
 <script>
@@ -641,7 +781,7 @@ async function load() {
 
   loading.style.display = "flex";
   streams.innerHTML = "";
-  document.getElementById("multiview-streams").innerHTML = "";
+  document.getElementById("mv-grid-wrap").innerHTML = "";
 
   try {
     const res = await fetch(`/.netlify/functions/dashboard?week=${encodeURIComponent(week)}`);
@@ -823,69 +963,134 @@ function render(events) {
   });
 }
 
-function renderMultiview(events) {
-  const div = document.getElementById("multiview-streams");
-  div.innerHTML = "";
+// ── Multiview state ──
+const MV_LAYOUTS = [
+  { id: "single",  label: "Single",       slots: 1,  icon: `<svg viewBox="0 0 22 16"><rect x="1" y="1" width="20" height="14" rx="1" fill="currentColor"/></svg>` },
+  { id: "vsplit",  label: "Vert Split",   slots: 2,  icon: `<svg viewBox="0 0 22 16"><rect x="1" y="1" width="9" height="14" rx="1" fill="currentColor"/><rect x="12" y="1" width="9" height="14" rx="1" fill="currentColor"/></svg>` },
+  { id: "hsplit",  label: "Horiz Split",  slots: 2,  icon: `<svg viewBox="0 0 22 16"><rect x="1" y="1" width="20" height="6" rx="1" fill="currentColor"/><rect x="1" y="9" width="20" height="6" rx="1" fill="currentColor"/></svg>` },
+  { id: "1plus2",  label: "1+2",          slots: 3,  icon: `<svg viewBox="0 0 22 16"><rect x="1" y="1" width="13" height="14" rx="1" fill="currentColor"/><rect x="16" y="1" width="5" height="6" rx="1" fill="currentColor"/><rect x="16" y="9" width="5" height="6" rx="1" fill="currentColor"/></svg>` },
+  { id: "quad",    label: "Quad",         slots: 4,  icon: `<svg viewBox="0 0 22 16"><rect x="1" y="1" width="9" height="6" rx="1" fill="currentColor"/><rect x="12" y="1" width="9" height="6" rx="1" fill="currentColor"/><rect x="1" y="9" width="9" height="6" rx="1" fill="currentColor"/><rect x="12" y="9" width="9" height="6" rx="1" fill="currentColor"/></svg>` },
+  { id: "1plus3",  label: "1+3",          slots: 4,  icon: `<svg viewBox="0 0 22 16"><rect x="1" y="1" width="13" height="14" rx="1" fill="currentColor"/><rect x="16" y="1" width="5" height="4" rx="1" fill="currentColor"/><rect x="16" y="6" width="5" height="4" rx="1" fill="currentColor"/><rect x="16" y="11" width="5" height="4" rx="1" fill="currentColor"/></svg>` },
+  { id: "1plus4",  label: "1+4",          slots: 5,  icon: `<svg viewBox="0 0 22 16"><rect x="1" y="1" width="14" height="14" rx="1" fill="currentColor"/><rect x="17" y="1" width="4" height="3" rx="1" fill="currentColor"/><rect x="17" y="5" width="4" height="3" rx="1" fill="currentColor"/><rect x="17" y="9" width="4" height="3" rx="1" fill="currentColor"/><rect x="17" y="13" width="4" height="2" rx="1" fill="currentColor"/></svg>` },
+  { id: "hex",     label: "Hex",          slots: 6,  icon: `<svg viewBox="0 0 22 16"><rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor"/><rect x="8" y="1" width="6" height="6" rx="1" fill="currentColor"/><rect x="15" y="1" width="6" height="6" rx="1" fill="currentColor"/><rect x="1" y="9" width="6" height="6" rx="1" fill="currentColor"/><rect x="8" y="9" width="6" height="6" rx="1" fill="currentColor"/><rect x="15" y="9" width="6" height="6" rx="1" fill="currentColor"/></svg>` },
+  { id: "1plus6",  label: "1+6",          slots: 7,  icon: `<svg viewBox="0 0 22 16"><rect x="1" y="1" width="12" height="14" rx="1" fill="currentColor"/><rect x="14" y="1" width="3" height="4" rx="1" fill="currentColor"/><rect x="18" y="1" width="3" height="4" rx="1" fill="currentColor"/><rect x="14" y="6" width="3" height="4" rx="1" fill="currentColor"/><rect x="18" y="6" width="3" height="4" rx="1" fill="currentColor"/><rect x="14" y="11" width="3" height="4" rx="1" fill="currentColor"/><rect x="18" y="11" width="3" height="4" rx="1" fill="currentColor"/></svg>` },
+  { id: "octo",    label: "Octo",         slots: 8,  icon: `<svg viewBox="0 0 22 16"><rect x="1" y="1" width="4" height="6" rx="1" fill="currentColor"/><rect x="6" y="1" width="4" height="6" rx="1" fill="currentColor"/><rect x="11" y="1" width="4" height="6" rx="1" fill="currentColor"/><rect x="16" y="1" width="5" height="6" rx="1" fill="currentColor"/><rect x="1" y="9" width="4" height="6" rx="1" fill="currentColor"/><rect x="6" y="9" width="4" height="6" rx="1" fill="currentColor"/><rect x="11" y="9" width="4" height="6" rx="1" fill="currentColor"/><rect x="16" y="9" width="5" height="6" rx="1" fill="currentColor"/></svg>` },
+  { id: "octo-v",  label: "Octo Vert",   slots: 8,  icon: `<svg viewBox="0 0 22 16"><rect x="1" y="1" width="9" height="3" rx="1" fill="currentColor"/><rect x="12" y="1" width="9" height="3" rx="1" fill="currentColor"/><rect x="1" y="5" width="9" height="3" rx="1" fill="currentColor"/><rect x="12" y="5" width="9" height="3" rx="1" fill="currentColor"/><rect x="1" y="9" width="9" height="3" rx="1" fill="currentColor"/><rect x="12" y="9" width="9" height="3" rx="1" fill="currentColor"/><rect x="1" y="13" width="9" height="2" rx="1" fill="currentColor"/><rect x="12" y="13" width="9" height="2" rx="1" fill="currentColor"/></svg>` },
+  { id: "nona",    label: "Nona",         slots: 9,  icon: `<svg viewBox="0 0 22 16"><rect x="1" y="1" width="6" height="4" rx="1" fill="currentColor"/><rect x="8" y="1" width="6" height="4" rx="1" fill="currentColor"/><rect x="15" y="1" width="6" height="4" rx="1" fill="currentColor"/><rect x="1" y="6" width="6" height="4" rx="1" fill="currentColor"/><rect x="8" y="6" width="6" height="4" rx="1" fill="currentColor"/><rect x="15" y="6" width="6" height="4" rx="1" fill="currentColor"/><rect x="1" y="11" width="6" height="4" rx="1" fill="currentColor"/><rect x="8" y="11" width="6" height="4" rx="1" fill="currentColor"/><rect x="15" y="11" width="6" height="4" rx="1" fill="currentColor"/></svg>` },
+  { id: "all",     label: "All Live",     slots: 99, icon: `<svg viewBox="0 0 22 16"><circle cx="4" cy="8" r="2.5" fill="currentColor"/><circle cx="11" cy="8" r="2.5" fill="currentColor"/><circle cx="18" cy="8" r="2.5" fill="currentColor"/></svg>` },
+];
 
-  if (!events || events.length === 0) {
-    div.innerHTML = "<p class='empty'>No events are scheduled for today.</p>";
+let mvLayout = "quad";
+let mvSelectedKeys = new Set();
+let mvAllKeys = [];
+
+function initMultiviewControls(events) {
+  // Layout buttons
+  const layoutWrap = document.getElementById("mv-layout-options");
+  layoutWrap.innerHTML = "";
+  MV_LAYOUTS.forEach(l => {
+    const btn = document.createElement("button");
+    btn.className = "mv-layout-btn" + (l.id === mvLayout ? " active" : "");
+    btn.innerHTML = l.icon + l.label;
+    btn.onclick = () => {
+      mvLayout = l.id;
+      document.querySelectorAll(".mv-layout-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      applyMultiviewLayout();
+    };
+    layoutWrap.appendChild(btn);
+  });
+
+  // Stream checkboxes — only events with a stream
+  const streamable = events.filter(e => e.type !== "none");
+  mvAllKeys = streamable.map(e => e.key);
+  // Default: select all live ones, or all if none are live
+  const live = streamable.filter(e => e.isLive).map(e => e.key);
+  mvSelectedKeys = new Set(live.length ? live : mvAllKeys);
+
+  const checksWrap = document.getElementById("mv-stream-checks");
+  checksWrap.innerHTML = "";
+  streamable.forEach(e => {
+    const label = document.createElement("label");
+    label.className = "mv-stream-check" + (mvSelectedKeys.has(e.key) ? " checked" : "");
+    const dot = e.isLive
+      ? `<span class="live-dot"></span>`
+      : `<span class="check-dot"></span>`;
+    label.innerHTML = `<input type="checkbox" ${mvSelectedKeys.has(e.key) ? "checked" : ""}>${dot}${e.name}`;
+    label.querySelector("input").addEventListener("change", ev => {
+      if (ev.target.checked) { mvSelectedKeys.add(e.key); label.classList.add("checked"); }
+      else { mvSelectedKeys.delete(e.key); label.classList.remove("checked"); }
+      applyMultiviewLayout();
+    });
+    checksWrap.appendChild(label);
+  });
+}
+
+function applyMultiviewLayout() {
+  if (!cachedEvents) return;
+  const twitchParent = encodeURIComponent(location.hostname);
+  const wrap = document.getElementById("mv-grid-wrap");
+
+  const layout = MV_LAYOUTS.find(l => l.id === mvLayout);
+  const streamable = cachedEvents.filter(e => e.type !== "none");
+
+  // For "all" layout, show every selected stream regardless of slot count
+  // For others, cap to layout.slots
+  let toShow;
+  if (mvLayout === "all") {
+    toShow = streamable.filter(e => mvSelectedKeys.has(e.key));
+  } else {
+    toShow = streamable.filter(e => mvSelectedKeys.has(e.key)).slice(0, layout.slots);
+  }
+
+  if (toShow.length === 0) {
+    wrap.innerHTML = `<p class="mv-no-streams">No streams selected. Pick some above.</p>`;
     return;
   }
 
-  const twitchParent = encodeURIComponent(location.hostname);
+  const grid = document.createElement("div");
+  grid.className = "mv-grid";
+  grid.dataset.layout = mvLayout;
 
-  events.forEach(e => {
-    let badge = "";
-    if (e.type !== "none" && e.isLive) {
-      badge = `<span class="live-badge">🔴 Live</span>`;
-    } else {
-      badge = `<span class="nostream-badge">📅 Today</span>`;
-    }
+  // For "all", dynamically pick a sensible column count
+  if (mvLayout === "all") {
+    const n = toShow.length;
+    const cols = n <= 1 ? 1 : n <= 2 ? 2 : n <= 4 ? 2 : n <= 6 ? 3 : n <= 9 ? 3 : 4;
+    grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  }
 
-    const tbaLink = `<a href="https://thebluealliance.com/event/${e.key}" target="_blank">↗ TBA</a>`;
-    const streamLink = e.type !== "none"
-      ? `<a href="${e.link}" target="_blank">↗ Stream</a> · ${tbaLink}`
-      : tbaLink;
+  toShow.forEach(e => {
+    const slot = document.createElement("div");
+    slot.className = "mv-slot";
 
-    let streamHTML = "";
+    let iframeSrc = "";
     if (e.type === "youtube") {
-      streamHTML = `<div class="mv-stream">
-        <iframe src="https://www.youtube.com/embed/${e.channel}?autoplay=0"
-          allowfullscreen
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-        </iframe>
-      </div>`;
+      iframeSrc = `https://www.youtube.com/embed/${e.channel}?autoplay=0`;
     } else if (e.type === "twitch") {
-      streamHTML = `<div class="mv-stream">
-        <iframe src="https://player.twitch.tv/?channel=${e.channel}&parent=${twitchParent}"
-          allowfullscreen>
-        </iframe>
-      </div>`;
-    } else {
-      streamHTML = `<div class="mv-stream">
-        <div class="no-stream-msg">No stream listed for this event.</div>
-      </div>`;
+      iframeSrc = `https://player.twitch.tv/?channel=${e.channel}&parent=${twitchParent}`;
     }
 
-    const card = document.createElement("div");
-    card.className = "mv-card";
-    card.innerHTML = `
-      <div class="mv-header">
-        <div class="mv-title-row">
-          ${badge}
-          <div class="mv-name">${e.name}</div>
-        </div>
-        <div class="mv-meta">
-          <span>${e.city}, ${e.country}</span>
-          <span>Week ${Number(e.week) + 1}</span>
-          ${streamLink}
-        </div>
-      </div>
-      ${streamHTML}
+    const liveDot = e.isLive ? `<span class="live-dot"></span>` : "";
+    slot.innerHTML = `
+      <iframe src="${iframeSrc}" allowfullscreen
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+      </iframe>
+      <div class="mv-slot-label">${liveDot}${e.name}</div>
     `;
-
-    div.appendChild(card);
+    grid.appendChild(slot);
   });
+
+  wrap.innerHTML = "";
+  wrap.appendChild(grid);
+}
+
+function renderMultiview(events) {
+  if (!events || events.length === 0) {
+    document.getElementById("mv-grid-wrap").innerHTML = "<p class=\'empty\'>No events scheduled today.</p>";
+    return;
+  }
+  initMultiviewControls(events);
+  applyMultiviewLayout();
 }
 
 function updateCountdowns() {
