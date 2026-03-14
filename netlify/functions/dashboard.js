@@ -172,7 +172,10 @@ export default async function handler(req) {
       });
     }));
 
-    output.sort((a, b) => (b.isLive ? 1 : 0) - (a.isLive ? 1 : 0));
+    output.sort((a, b) => {
+      const tier = e => e.isLive ? 0 : e.upcomingSchedule && e.upcomingSchedule.length ? 1 : 2;
+      return tier(a) - tier(b);
+    });
 
     return new Response(JSON.stringify(output), {
       status: 200,
