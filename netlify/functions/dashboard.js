@@ -31,7 +31,7 @@ export default async function handler(req) {
     const candidates = events.filter(e => {
       if (weekFilter !== "all" && String(e.week) !== String(weekFilter)) return false;
       const isRegional = e.event_type === 0;
-      const daysBack = isRegional ? 2 : 1; // how many days before end_date to start showing
+      const daysBack = isRegional ? 2 : 1;
       const end = new Date(e.end_date + "T00:00:00Z");
       const windowStart = new Date(end);
       windowStart.setDate(windowStart.getDate() - daysBack);
@@ -91,15 +91,56 @@ export default async function handler(req) {
           : "https://twitch.tv/" + stream.channel;
       }
 
-      // Today's matches, next upcoming, live status
+      // --- DRIFT CALCULATION ---
       const nowSec = Date.now() / 1000;
       const todayMatches = matches.filter(m => m.time && fmtDate(m.time) === today);
-      const upcoming = todayMatches.filter(m => m.time > nowSec).sort((a, b) => a.time - b.time);
+
+      // Completed matches today with a real score and a scheduled time
+      const completedToday = todayMatches
+        .filter(m =>
+          m.alliances &&
+          m.alliances.red.score !== null &&
+          m.alliances.red.score >= 0 &&
+          m.time
+        )
+        .sort((a, b) => a.time - b.time);
+
+      let driftSec = 0;
+
+      if (completedToday.length >= 2) {
+        // Calculate average match cycle from gaps between completed matches' scheduled times
+        let totalGap = 0;
+        for (let i = 1; i < completedToday.length; i++) {
+          totalGap += completedToday[i].time - completedToday[i - 1].time;
+        }
+        const avgCycle = totalGap / (completedToday.length - 1);
+
+        // Drift = how far now is from when the next match "should" start
+        const lastDone = completedToday[completedToday.length - 1];
+        const expectedNextStart = lastDone.time + avgCycle;
+        driftSec = nowSec - expectedNextStart;
+
+        // Cap drift to ±2 hours to prevent bad TBA data blowing things up
+        driftSec = Math.max(-7200, Math.min(7200, driftSec));
+      }
+
+      const driftMin = Math.round(driftSec / 60);
+
+      // Upcoming = not yet completed/scored
+      const upcoming = todayMatches
+        .filter(m =>
+          !(m.alliances && m.alliances.red.score !== null && m.alliances.red.score >= 0)
+        )
+        .sort((a, b) => a.time - b.time);
+
       const nextMatch = upcoming.length ? upcoming[0].key.split("_")[1].toUpperCase() : "";
-      const nextMatchTime = upcoming.length ? upcoming[0].time : null;
+      const nextMatchTime = upcoming.length ? upcoming[0].time + driftSec : null;
+
       const upcomingSchedule = upcoming.slice(0, 8).map(m => ({
         key: m.key.split("_")[1].toUpperCase(),
-        time: m.time
+        time: m.time + driftSec,   // drift-adjusted time shown to user
+        scheduled: m.time,          // original scheduled time kept for reference
+        driftMin                    // passed to frontend for the label
       }));
 
       let isLive = false;
@@ -168,6 +209,7 @@ export default async function handler(req) {
         nextMatch,
         nextMatchTime,
         upcomingSchedule,
+        driftMin,
         isLive
       });
     }));

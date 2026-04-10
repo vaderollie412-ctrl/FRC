@@ -83,7 +83,12 @@ button:active { transform: scale(0.97); }
 .eta-cell { font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
 .on-field { color: var(--red); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; animation: blink-red 1s ease-in-out infinite; }
 @keyframes blink-red { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
-.schedule-title { color: var(--muted); font-size: 0.75rem; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+.schedule-title { color: var(--muted); font-size: 0.75rem; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+/* DRIFT TAG */
+.drift-tag { font-size: 0.68rem; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.06em; padding: 1px 6px; border-radius: 3px; text-transform: uppercase; }
+.drift-late  { background: rgba(255,209,102,0.12); color: #ffd166; border: 1px solid rgba(255,209,102,0.25); }
+.drift-early { background: rgba(110,231,255,0.10); color: var(--blue); border: 1px solid rgba(110,231,255,0.2); }
+.drift-ok    { background: rgba(0,229,160,0.08);   color: #00e5a0; border: 1px solid rgba(0,229,160,0.2); }
 .empty { color: var(--muted); font-size: 1rem; padding: 20px 0; }
 .event-panel { display: none; flex-direction: column; border-top: 1px solid var(--border); background: var(--panel); }
 .event.open .event-panel { display: flex; }
@@ -418,6 +423,15 @@ async function load() {
   }
 }
 
+// ── DRIFT TAG HELPER ──────────────────────────────────────────────────────────
+function makeDriftTag(driftMin) {
+  if (driftMin === undefined || driftMin === null) return "";
+  const abs = Math.abs(driftMin);
+  if (abs < 2) return '<span class="drift-tag drift-ok">On Schedule</span>';
+  if (driftMin > 0) return '<span class="drift-tag drift-late">+' + driftMin + ' min behind</span>';
+  return '<span class="drift-tag drift-early">' + driftMin + ' min ahead</span>';
+}
+
 // ── RENDER DASHBOARD ──────────────────────────────────────────────────────────
 function render(events) {
   const div = document.getElementById("streams");
@@ -455,14 +469,16 @@ function buildCard(e, isPinned, twitchParent) {
     ? '<a href="' + e.link + '" target="_blank">&nearr; Stream</a> ' + tbaLink + ' ' + statboticsLink
     : tbaLink + ' ' + statboticsLink;
 
+  // Schedule with drift tag
   let scheduleHTML = "";
   if (e.upcomingSchedule && e.upcomingSchedule.length) {
+    const driftTag = makeDriftTag(e.driftMin);
     const rows = e.upcomingSchedule.map((m, i) =>
       '<tr class="' + (i === 0 ? "next-row" : "") + '" data-time="' + m.time + '">'
       + '<td><span class="schedule-match-key">' + m.key + '</span></td>'
       + '<td class="eta-cell" data-time="' + m.time + '">&mdash;</td></tr>'
     ).join("");
-    scheduleHTML = '<div class="schedule-title">&#x23ED; Upcoming Matches</div>'
+    scheduleHTML = '<div class="schedule-title">&#x23ED; Upcoming Matches ' + driftTag + '</div>'
       + '<table class="schedule-table"><thead><tr><th>Match</th><th style="text-align:right">ETA</th></tr></thead><tbody>' + rows + '</tbody></table>';
   }
 
@@ -549,11 +565,10 @@ const MV_LAYOUTS = [
 
 let mvLayout = "quad";
 let mvSelectedKeys = new Set();
-let mvSlotOrder = []; // drag-and-drop order
+let mvSlotOrder = [];
 let dragSrcKey = null;
 
 function initMultiviewControls(events) {
-  // Layout buttons
   const lw = document.getElementById("mv-layout-options");
   lw.innerHTML = "";
   MV_LAYOUTS.forEach(l => {
@@ -574,12 +589,10 @@ function initMultiviewControls(events) {
   const live       = streamable.filter(e => e.isLive).map(e => e.key);
   mvSelectedKeys   = new Set(live.length ? live : allKeys);
 
-  // Preserve existing drag order, append new keys
   const prev = mvSlotOrder.filter(k => allKeys.includes(k));
   const newK = allKeys.filter(k => !prev.includes(k));
   mvSlotOrder = [...prev, ...newK];
 
-  // Stream checkboxes
   const cw = document.getElementById("mv-stream-checks");
   cw.innerHTML = "";
   streamable.forEach(e => {
@@ -599,8 +612,8 @@ function initMultiviewControls(events) {
 function applyMultiviewLayout() {
   if (!cachedEvents) return;
   const twitchParent = encodeURIComponent(location.hostname);
-  const wrap    = document.getElementById("mv-grid-wrap");
-  const layout  = MV_LAYOUTS.find(l => l.id === mvLayout);
+  const wrap     = document.getElementById("mv-grid-wrap");
+  const layout   = MV_LAYOUTS.find(l => l.id === mvLayout);
   const eventMap = Object.fromEntries(cachedEvents.filter(e => e.type !== "none").map(e => [e.key, e]));
   const ordered  = mvSlotOrder.filter(k => mvSelectedKeys.has(k) && eventMap[k]);
   const toShow   = (mvLayout === "all" ? ordered : ordered.slice(0, layout.slots)).map(k => eventMap[k]);
@@ -625,8 +638,8 @@ function applyMultiviewLayout() {
       ? "https://www.youtube.com/embed/" + e.channel + "?autoplay=0"
       : "https://player.twitch.tv/?channel=" + e.channel + "&parent=" + twitchParent;
     const dot = e.isLive ? '<span class="live-dot"></span>' : "";
-    const escapedSrc  = src.replace(/'/g, "\'");
-    const escapedName = e.name.replace(/'/g, "\'");
+    const escapedSrc  = src.replace(/'/g, "\\'");
+    const escapedName = e.name.replace(/'/g, "\\'");
 
     slot.innerHTML =
       '<iframe src="' + src + '" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>'
@@ -692,7 +705,7 @@ function closeFsOverlay() {
 function openFsGrid() {
   if (!cachedEvents) return;
   const twitchParent = encodeURIComponent(location.hostname);
-  const layout  = MV_LAYOUTS.find(l => l.id === mvLayout);
+  const layout   = MV_LAYOUTS.find(l => l.id === mvLayout);
   const eventMap = Object.fromEntries(cachedEvents.filter(e => e.type !== "none").map(e => [e.key, e]));
   const ordered  = mvSlotOrder.filter(k => mvSelectedKeys.has(k) && eventMap[k]);
   const toShow   = (mvLayout === "all" ? ordered : ordered.slice(0, layout.slots)).map(k => eventMap[k]);
